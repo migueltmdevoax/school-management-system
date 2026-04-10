@@ -1,15 +1,15 @@
 
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import StudentForm from "./StudentForm" // 👈 #3
+import StudentForm from "./StudentForm" 
 
 function StudentList({ students, onDelete, onEdit, onAdd }) {
   const [editingId, setEditingId] = useState(null)
   const [editingValue, setEditingValue] = useState("")
-  const [showForm, setShowForm] = useState(false) // 👈 #1
+  const [showForm, setShowForm] = useState(false) 
 
   const { user } = useAuth()
-  const isAdmin = user?.role === "admin" // 👈 #4
+  const isAdmin = user?.role === "admin" 
 
   function startEditing(student) {
     setEditingId(student.id)
@@ -35,21 +35,21 @@ function StudentList({ students, onDelete, onEdit, onAdd }) {
 
   function handleAddStudent(newStudent) {
     onAdd(newStudent)
-    setShowForm(false) // cierra el form después de agregar
+    setShowForm(false) 
   }
 
   return (
     <div>
       <h2>Students ({students.length})</h2>
 
-      {/* 👈 #2 + #4: onClick real + guard de rol */}
+      
       {isAdmin && (
         <button onClick={() => setShowForm(prev => !prev)}>
           {showForm ? "Cancel" : "Add Student"}
         </button>
       )}
 
-      {/* 👈 #3: renderiza StudentForm condicionalmente */}
+      
       {isAdmin && showForm && (
         <StudentForm onSubmit={handleAddStudent} />
       )}
@@ -69,7 +69,7 @@ function StudentList({ students, onDelete, onEdit, onAdd }) {
             ) : (
               <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
                 <span style={{ marginRight: "15px" }}>{s.name} - {s.age} yrs</span>
-                {/* 👈 #4: los botones de editar/borrar también van protegidos */}
+                
                 {isAdmin && (
                   <>
                     <button onClick={() => startEditing(s)}>✏️</button>
