@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 
-function StudentForm({ onAdd, existingStudents = [], buttonText }) {
+function StudentForm({ onSubmit, onClose, existingStudents = [], buttonText }) {
   const [name, setName] = useState("")
   const [age, setAge] = useState("")
 
@@ -26,10 +26,11 @@ function StudentForm({ onAdd, existingStudents = [], buttonText }) {
       return 
     }
 
-    onAdd({
-      name: trimmed,
-      age: parsedAge
+    onSubmit({
+     name: trimmed,
+     age: parsedAge
     })
+    onClose()
     setName("")
     setAge("")
   }
@@ -49,6 +50,9 @@ function StudentForm({ onAdd, existingStudents = [], buttonText }) {
         onChange={(e) => setAge(e.target.value)}
       />
       <button>{buttonText || "Add Student"}</button>
+      <button type="button" onClick={onClose}>
+        Cancel
+      </button>
     </form>
   )
 }

@@ -44,16 +44,20 @@ function StudentList({ students, onDelete, onEdit, onAdd }) {
 
       
       {isAdmin && (
-        <button onClick={() => setShowForm(prev => !prev)}>
+        <button onClick={() => setShowForm(true)}>
           {showForm ? "Cancel" : "Add Student"}
         </button>
       )}
 
       
       {isAdmin && showForm && (
-        <StudentForm onSubmit={handleAddStudent} />
+        <StudentForm
+          onSubmit={handleAddStudent}
+          onClose={() => setShowForm(false)}
+        />
       )}
 
+      
       <ul>
         {students.map((s) => (
           <li key={s.id} style={{ marginBottom: "10px" }}>
