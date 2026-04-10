@@ -4,6 +4,7 @@ import {
     createAdmission,
     updateAdmission,
     deleteAdmission,
+    convertToStudent
 } from "../controllers/admissionController.js"
 
 const router = express.Router()
