@@ -1,9 +1,13 @@
 
 import { useState } from "react"
+import { useAuth } from "../context/AuthContext"
+
 
 function StudentList({ students, onDelete, onEdit }) {
   const [editingId, setEditingId] = useState(null)
   const [editingValue, setEditingValue] = useState("")
+
+  const { user } = useAuth()
 
   function startEditing(student) {
     setEditingId(student.id)
@@ -34,6 +38,10 @@ function StudentList({ students, onDelete, onEdit }) {
   return (
     <div>
         <h2>Students {students.length}</h2>
+        
+        {user.role === "admin" && (
+          <button>Add Student</button>
+        )}
         <ul>
             {students.map((s) => ( 
                 <li key={s.id} style={{marginBottom: '10px'}}>
