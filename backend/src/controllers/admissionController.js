@@ -42,12 +42,8 @@ export const convertToStudent = (req, res) => {
     return res.status(404).json({ message: "Admission not found" })
   }
 
-  // 👇 aquí solo cambiamos estado por ahora
   admission.status = "completed"
 
-  res.json({
-    message: "Converted to student",
-    admission
-  })
+  res.json({ message: "Converted to student", admission })
 }
 
