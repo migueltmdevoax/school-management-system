@@ -37,11 +37,6 @@ export default function DashboardPage() {
       />
 
       <div className="controls">
-        <StudentForm 
-          onAdd={addStudent} 
-          existingStudents={students}
-        />
-
         <StudentSearch
           value={search}
           onChange={setSearch}
@@ -52,6 +47,7 @@ export default function DashboardPage() {
         students={filteredStudents}
         onDelete={deleteStudent}
         onEdit={editStudent}
+        onAdd={addStudent}
       /> 
 
       <TeachersCounter 

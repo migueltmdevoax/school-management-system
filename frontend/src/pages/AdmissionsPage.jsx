@@ -21,7 +21,8 @@ export default function AdmissionsPage() {
 
             {showForm && (
                 <StudentForm
-                onAdd={addAdmission}
+                onSubmit={addAdmission}
+                onClose={() => setShowForm(false)}
                 existingStudents={admissions}
                 buttonText="Crear admisión"
                 />

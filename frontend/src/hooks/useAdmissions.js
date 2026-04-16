@@ -7,37 +7,71 @@ export function useAdmissions() {
     const [admissions, setAdmissions] = useState([])
 
     const fetchAdmissions = async () => {
-        const res = await fetch(API_URL)
-        const data = await res.json()
-        setAdmissions(data)
+        try {
+            const res = await fetch(API_URL)
+
+            if(!res.ok) {
+                throw new Error("Error fetching admissions")
+            }
+
+            const data = await res.json()
+            setAdmissions(data)
+        }   catch (error) {
+            console.error("FETCH ADMISSION ERROR:", error)
+        }
     }
 
     const addAdmission = async (admission) => {
-        console.log("SENDING:", admission)
+        try {
+            console.log("SENDING:", admission)
 
-        await fetch(API_URL, {
+            const res = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-type": "application/json" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(admission)
-        })
+            })
 
-        fetchAdmissions()
+            if (!res.ok) {
+                throw new Error("Addmission was not added")
+            }
+
+            await fetchAdmissions()
+        }   catch (error) {
+            console.error("ADD ADMISSION ERROR:", error)
+        }
     }
 
     const deleteAdmission = async (id) => {
-        await fetch(`${API_URL}/${id}`, {
+        try {
+            const res = await fetch(`${API_URL}/${id}`, {
             method: "DELETE"
-        })
+            })
 
-        fetchAdmissions()
+            if (!res.ok) {
+                throw new Error("Addmission was not deleted")
+            }
+
+            await fetchAdmissions()
+        }   catch (error) {
+            console.error("DELETE ADMISSION ERROR:", error)
+        }
+        
     }
 
     const convertAdmission = async (id) => {
-        await fetch(`${API_URL}/${id}/convert`, {
+        try {
+            const res = await fetch(`${API_URL}/${id}/convert`, {
             method: "POST"
         })
 
-        fetchAdmissions()
+        if (!res.ok) {
+                throw new Error("Addmission was not converted")
+            }
+
+            await fetchAdmissions()
+        }   catch (error) {
+            console.error("CONVERT ADMISSION ERROR:", error)
+        }
     }
 
     useEffect(() => {

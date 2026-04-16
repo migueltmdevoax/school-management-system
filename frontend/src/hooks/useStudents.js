@@ -5,42 +5,76 @@ const API_URL = "http://localhost:3000/api/students"
 export function useStudents() {
   const [students, setStudents] = useState([])
 
-  // 🔹 GET
+  
   const fetchStudents = async () => {
-    const res = await fetch(API_URL)
-    const data = await res.json()
-    setStudents(data)
+    try {
+      const res = await fetch(API_URL)
+
+      if(!res.ok) {
+        throw new Error("Error fetching students")
+      }
+
+      const data = await res.json()
+      setStudents(data)
+    } catch (error) {
+      console.error("FETCH STUDENTS ERROR:", error)
+    }
+    
   }
 
-  // 🔹 POST
   const addStudent = async (student) => {
-    await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(student)
-    })
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(student)
+      })
 
-    fetchStudents()
+      if (!res.ok) {
+        throw new Error("Error creating student")
+      }
+
+      await fetchStudents() // 👈 IMPORTANTE
+    } catch (error) {
+      console.error("ADD STUDENT ERROR:", error)
+    }
   }
 
-  // 🔹 DELETE
+
   const deleteStudent = async (id) => {
-    await fetch(`${API_URL}/${id}`, {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
       method: "DELETE"
-    })
+      })
 
-    fetchStudents()
+      if (!res.ok) {
+        throw new Error("Error when deleting student")
+      }
+      await fetchStudents()
+    } catch (error) {
+      console.error("DELETE STUDENT ERROR:", error)
+    }
+    
   }
 
-  // 🔹 PUT
+  
   const editStudent = async (id, updated) => {
-    await fetch(`${API_URL}/${id}`, {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updated)
-    })
+      })
 
-    fetchStudents()
+      if (!res.ok) {
+        throw new Error("Error while editing student")
+      }
+
+      await fetchStudents()
+    } catch (error) {
+      console.error("UPDATE STUDENT ERROR:", error)
+    }
+    
   }
 
   const averageAge =

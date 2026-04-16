@@ -1,12 +1,10 @@
 
 import { useState } from "react"
-import { useAuth } from "../context/AuthContext"
-import StudentForm from "./StudentForm" 
+import { useAuth } from "./context/AuthContext"
 
-function StudentList({ students, onDelete, onEdit, onAdd }) {
+function StudentList({ students, onDelete, onEdit }) {
   const [editingId, setEditingId] = useState(null)
   const [editingValue, setEditingValue] = useState("")
-  const [showForm, setShowForm] = useState(false) 
 
   const { user } = useAuth()
   const isAdmin = user?.role === "admin" 
@@ -18,46 +16,27 @@ function StudentList({ students, onDelete, onEdit, onAdd }) {
 
   function saveEdit() {
     const trimmedName = editingValue.trim()
+
     if (!trimmedName) {
       alert("Name can't be empty")
       return
     }
     const exists = students.some(s => s.name === trimmedName && s.id !== editingId)
+
     if (exists) {
       alert(`❌ "${trimmedName}" already on the list`)
       return
     }
+    
     const studentToEdit = students.find(s => s.id === editingId)
     onEdit(editingId, { ...studentToEdit, name: trimmedName })
     setEditingId(null)
     setEditingValue("")
   }
 
-  function handleAddStudent(newStudent) {
-    onAdd(newStudent)
-    setShowForm(false) 
-  }
-
   return (
     <div>
-      <h2>Students ({students.length})</h2>
-
-      
-      {isAdmin && (
-        <button onClick={() => setShowForm(true)}>
-          {showForm ? "Cancel" : "Add Student"}
-        </button>
-      )}
-
-      
-      {isAdmin && showForm && (
-        <StudentForm
-          onSubmit={handleAddStudent}
-          onClose={() => setShowForm(false)}
-        />
-      )}
-
-      
+      <h2>Students ({students.length})</h2> 
       <ul>
         {students.map((s) => (
           <li key={s.id} style={{ marginBottom: "10px" }}>
@@ -90,3 +69,5 @@ function StudentList({ students, onDelete, onEdit, onAdd }) {
 }
 
 export default StudentList
+
+

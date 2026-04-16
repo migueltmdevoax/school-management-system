@@ -30,7 +30,7 @@ function StudentForm({ onSubmit, onClose, existingStudents = [], buttonText }) {
      name: trimmed,
      age: parsedAge
     })
-    onClose()
+    onClose?.()
     setName("")
     setAge("")
   }
