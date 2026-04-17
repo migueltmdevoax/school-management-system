@@ -7,7 +7,7 @@ export const getGrades = (req, res) => {
 export const createGrade = (req, res) => {
   const { studentId, subject, score, period } = req.body
 
-  if (!studentId || !subject || !score) {
+  if (!studentId || !subject || score === undefined) {
     return res.status(400).json({ message: "Missing required fields" })
   }
 

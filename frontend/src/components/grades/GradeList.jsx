@@ -1,10 +1,16 @@
-export default function GradeList({ grades, onEdit, onDelete, role }) {
+export default function GradeList({ grades, students, role, onEdit, onDelete }) {
+
+    const getStudentName = (id) => {
+      const student = students.find(s => s.id == id)
+      return student ? student.name : "Unknown"
+    }
   return (
     <div>
       {grades.map((g) => (
         <div key={g.id}>
-          <p>{g.studentId} - {g.subject} - {g.score}</p>
-
+          <p>
+            {getStudentName(g.studentId)} - {g.subject} - {g.score}
+          </p>
           {(role === "admin" || role === "teacher") && (
             <>
               <button onClick={() => onEdit(g)}>Edit</button>

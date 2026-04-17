@@ -3,6 +3,8 @@ import { useGrades } from "../hooks/useGrades"
 import GradeList from "../components/grades/GradeList"
 import GradeForm from "../components/grades/GradeForm"
 import { useAuth } from "../context/AuthContext"
+import { useStudents } from "../hooks/useStudents"
+
 
 export default function GradesPage() {
   const { grades, fetchGrades, createGrade, updateGrade, deleteGrade } = useGrades()
@@ -10,9 +12,6 @@ export default function GradesPage() {
 
   const [selectedGrade, setSelectedGrade] = useState(null)
 
-  useEffect(() => {
-    fetchGrades()
-  }, [])
 
   const handleSubmit = async (data) => {
     if (selectedGrade) {
@@ -34,16 +33,28 @@ export default function GradesPage() {
     fetchGrades()
   }
 
+  const { students, fetchStudents } = useStudents()
+
+  useEffect(() => {
+    fetchGrades()
+    fetchStudents()
+  }, [])
+
+
   return (
     <div>
       <h1>Grades</h1>
 
       {(user.role === "admin" || user.role === "teacher") && (
-        <GradeForm onSubmit={handleSubmit} selectedGrade={selectedGrade} />
+        <GradeForm 
+          onSubmit={handleSubmit} 
+          selectedGrade={selectedGrade}
+          students={students}
+        />
       )}
-
       <GradeList
         grades={grades}
+        students={students}
         onEdit={handleEdit}
         onDelete={handleDelete}
         role={user.role}

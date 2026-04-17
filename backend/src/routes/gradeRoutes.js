@@ -13,6 +13,6 @@ router.get("/", getGrades)
 router.post("/", createGrade,)
 router.put("/:id", updateGrade,)
 router.delete("/:id", deleteGrade,)
-router.get("/student/:studentdId", getGradesByStudent)
+router.get("/student/:studentId", getGradesByStudent)
 
 export default router
