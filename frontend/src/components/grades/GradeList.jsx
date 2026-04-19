@@ -1,3 +1,5 @@
+import { hasPermission } from "../../utils/permissions"
+
 export default function GradeList({ grades = [], students = [], role, onEdit, onDelete }) {
     
     const studentMap = students.reduce((acc, s) => {
@@ -52,7 +54,7 @@ export default function GradeList({ grades = [], students = [], role, onEdit, on
               <div key={g.id}>
                 <span>{g.subject} - {g.score}</span>
 
-                {(role === "admin" || role === "teacher") && (
+                {hasPermission({ role }, "update:grades") && (
                   <>
                     <button onClick={() => onEdit(g)}>Edit</button>
                     <button onClick={() => onDelete(g.id)}>Delete</button>

@@ -6,8 +6,10 @@ import { useLocation } from "react-router-dom"
 
 export default function Sidebar() {
   const { user } = useAuth()
+  const canManageAcademic = ["admin", "teacher"].includes(user?.role)
   const location = useLocation()
     console.log("PATH:", location.pathname)
+    
   return (
     <aside className="sidebar">
       <h2>Sistema Escolar</h2>
@@ -35,15 +37,24 @@ export default function Sidebar() {
          Maestros
        </NavLink>
 
+      {canManageAcademic && 
+       <NavLink
+         to="/grades"
+         className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}
+       >
+         Grades
+       </NavLink>
+      }
 
-       {["admin", "teacher"].includes(user?.role) && (
+      {canManageAcademic && 
        <NavLink
          to="/admissions"
          className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}
        >
          Admisión
        </NavLink>
-       )}
+      }
+
       </nav>
     </aside>
   );

@@ -88,6 +88,7 @@ export function useStudents() {
 
   return {
     students,
+    fetchStudents,
     addStudent,
     deleteStudent,
     editStudent,

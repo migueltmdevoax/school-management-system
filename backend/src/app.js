@@ -3,11 +3,14 @@ import cors from "cors"
 import studentRoutes from "./routes/studentRoutes.js"
 import admissionRoutes from "./routes/admissionRoutes.js"
 import gradeRoutes from "./routes/gradeRoutes.js"
+import { mockAuth } from "./middleware/auth.js"
+
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use(mockAuth)
 
 app.use("/api/students", studentRoutes)
 app.use("/api/admissions", admissionRoutes)

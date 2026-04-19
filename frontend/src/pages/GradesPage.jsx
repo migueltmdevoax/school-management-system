@@ -4,6 +4,7 @@ import GradeList from "../components/grades/GradeList"
 import GradeForm from "../components/grades/GradeForm"
 import { useAuth } from "../context/AuthContext"
 import { useStudents } from "../hooks/useStudents"
+import { hasPermission } from "../utils/permissions"
 
 
 export default function GradesPage() {
@@ -40,20 +41,27 @@ export default function GradesPage() {
     fetchStudents()
   }, [])
 
+  let filteredGrades = grades
+
+  if (user.role === "parent") {
+    filteredGrades = grades.filter(
+      g => g.studentId == user.studentId
+    )
+  }
 
   return (
     <div>
       <h1>Grades</h1>
 
-      {(user.role === "admin" || user.role === "teacher") && (
+      {hasPermission(user, "create:grades") && (
         <GradeForm 
-          onSubmit={handleSubmit} 
+          onSubmit={handleSubmit}
           selectedGrade={selectedGrade}
           students={students}
         />
       )}
       <GradeList
-        grades={grades}
+        grades={filteredGrades}
         students={students}
         onEdit={handleEdit}
         onDelete={handleDelete}
