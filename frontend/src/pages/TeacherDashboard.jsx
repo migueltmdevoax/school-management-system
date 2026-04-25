@@ -12,10 +12,7 @@ export default function TeacherDashboard() {
   }, [])
 
   const getGradesByStudent = (studentId) => {
-  return grades.filter(g => {
-    console.log("COMPARE:", g.studentId, studentId)
-    return Number(g.studentId) === Number(studentId)
-  })
+  return grades.filter(g => Number(g.studentId) === Number(studentId))
 }
 
   const calculateAverage = (studentGrades) => {

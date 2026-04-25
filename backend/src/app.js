@@ -6,6 +6,7 @@ import gradeRoutes from "./routes/gradeRoutes.js"
 import { mockAuth } from "./middleware/auth.js"
 
 
+
 const app = express()
 
 app.use(cors())
@@ -15,6 +16,8 @@ app.use(mockAuth)
 app.use("/api/students", studentRoutes)
 app.use("/api/admissions", admissionRoutes)
 app.use("/api/grades", gradeRoutes)
+app.use("/students", studentRoutes)
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000")
