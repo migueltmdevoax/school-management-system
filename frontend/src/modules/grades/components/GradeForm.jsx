@@ -1,95 +1,173 @@
-import { useEffect, useState } from "react"
-import Button from "../../../components/ui/Button"
+import {
+  useEffect,
+  useState
+} from "react";
 
-export default function GradeForm({ onSubmit, selectedGrade, students }) {
-  const [form, setForm] = useState({
-    studentId: "",
-    subject: "",
-    score: "",
-    period: ""
-  })
+import Button
+from "../../../components/ui/Button";
+
+
+
+export default function GradeForm({
+
+  onSubmit,
+  selectedGrade,
+
+}) {
+
+  const [form, setForm] =
+    useState({
+
+      student_id: "",
+      assignment_title: "",
+      grade: "",
+
+    });
+
+
+
 
   useEffect(() => {
+
     if (selectedGrade) {
+
       setForm({
-        studentId: selectedGrade.studentId || "",
-        subject: selectedGrade.subject || "",
-        score: selectedGrade.score || "",
-        period: selectedGrade.period || ""
-      })
-    }
-  }, [selectedGrade])
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
-  }
+        student_id:
+          selectedGrade.student_id || "",
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+        assignment_title:
+          selectedGrade.assignment_title || "",
 
-    if (!form.studentId) {
-      alert("Select a student")
-      return
+        grade:
+          selectedGrade.grade || "",
+
+      });
     }
 
-    onSubmit({
-      ...form,
-      score: Number(form.score)
-    })
+  }, [selectedGrade]);
 
-    setForm({ studentId: "", subject: "", score: "", period: "" })
-  }
+
+
+
+  const handleChange =
+    (e) => {
+
+      setForm({
+
+        ...form,
+
+        [e.target.name]:
+          e.target.value,
+
+      });
+    };
+
+
+
+
+  const handleSubmit =
+    (e) => {
+
+      e.preventDefault();
+
+      onSubmit({
+
+        ...form,
+
+        grade:
+          Number(form.grade),
+
+      });
+
+      setForm({
+
+        student_id: "",
+        assignment_title: "",
+        grade: "",
+
+      });
+    };
+
+
+
 
   return (
-    <form onSubmit={handleSubmit} className="card row">
-      
-      <select
-        name="studentId"
-        value={form.studentId}
-        onChange={handleChange}
-        className="input"
-      >
-        <option value="">Select student</option>
-        {students.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+
+    <form
+      onSubmit={handleSubmit}
+      className="
+        bg-gray-900
+        border
+        border-gray-800
+        rounded-2xl
+        p-5
+        space-y-4
+      "
+    >
 
       <input
-        name="subject"
-        placeholder="Subject"
-        value={form.subject}
+        type="text"
+        name="student_id"
+        placeholder="Student ID"
+        value={form.student_id}
         onChange={handleChange}
-        className="input"
+        className="
+          w-full
+          bg-gray-800
+          rounded-xl
+          p-3
+          text-white
+        "
       />
 
+
+
       <input
-        name="score"
+        type="text"
+        name="assignment_title"
+        placeholder="Assignment"
+        value={form.assignment_title}
+        onChange={handleChange}
+        className="
+          w-full
+          bg-gray-800
+          rounded-xl
+          p-3
+          text-white
+        "
+      />
+
+
+
+      <input
         type="number"
-        min="0"
-        max="10"
-        placeholder="Score"
-        value={form.score}
+        name="grade"
+        placeholder="Grade"
+        value={form.grade}
         onChange={handleChange}
-        className="input"
+        className="
+          w-full
+          bg-gray-800
+          rounded-xl
+          p-3
+          text-white
+        "
       />
 
-      <input
-        name="period"
-        placeholder="Period"
-        value={form.period}
-        onChange={handleChange}
-        className="input"
-      />
 
-      <Button variant="primary" type="submit">
-        {selectedGrade ? "Update" : "Create"}
+
+      <Button
+        variant="primary"
+        type="submit"
+      >
+
+        {selectedGrade
+          ? "Update Grade"
+          : "Create Grade"}
+
       </Button>
+
     </form>
-  )
+  );
 }

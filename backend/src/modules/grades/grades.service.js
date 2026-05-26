@@ -29,8 +29,6 @@ export const create = async ({
     feedback
   ];
 
-
-
   const result =
     await db.query(query, values);
 
@@ -44,7 +42,6 @@ export const create = async ({
     await db.query(`
 
       SELECT
-
         ast.student_id
 
       FROM assignment_students ast
@@ -68,7 +65,7 @@ export const create = async ({
 
 
 
-// 🟣 GET ALL GRADES PRO
+// 🟣 GET ALL GRADES
 export const getAll = async () => {
 
   const result = await db.query(`
@@ -101,7 +98,7 @@ export const getAll = async () => {
 
   `);
 
-  return result.rows;
+  return result.rows || [];
 };
 
 
@@ -109,6 +106,10 @@ export const getAll = async () => {
 // 🟣 GET BY ASSIGNMENT STUDENT
 export const getByAssignmentStudent =
 async (assignmentStudentId) => {
+
+  if (!assignmentStudentId) {
+    return [];
+  }
 
   const result = await db.query(`
 
@@ -122,14 +123,19 @@ async (assignmentStudentId) => {
 
   `, [assignmentStudentId]);
 
-  return result.rows;
+  return result.rows || [];
 };
 
 
 
-//🟣 GET GRADES BY TEACHER
+// 🟣 GET GRADES BY TEACHER
 export const getByTeacherId =
 async (teacherId) => {
+
+  // 🔥 SAFE GUARD
+  if (!teacherId) {
+    return [];
+  }
 
   const result =
     await db.query(`
@@ -164,13 +170,19 @@ async (teacherId) => {
 
     `, [teacherId]);
 
-  return result.rows;
+  return result.rows || [];
 };
 
 
-//🟣 GET GRADES BY PARENT
+
+// 🟣 GET GRADES BY PARENT
 export const getByParentId =
 async (parentId) => {
+
+  // 🔥 SAFE GUARD
+  if (!parentId) {
+    return [];
+  }
 
   const result =
     await db.query(`
@@ -205,5 +217,5 @@ async (parentId) => {
 
     `, [parentId]);
 
-  return result.rows;
+  return result.rows || [];
 };

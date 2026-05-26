@@ -1,14 +1,10 @@
 import { apiSlice }
 from "../../../app/api/apiSlice";
 
-
-
 export const assignmentsApi =
   apiSlice.injectEndpoints({
 
     endpoints: (builder) => ({
-
-
 
       // 🔥 GET ASSIGNMENTS
       getAssignments:
@@ -16,6 +12,21 @@ export const assignmentsApi =
 
           query: () =>
             "/assignments",
+
+          providesTags:
+            ["Assignments"]
+
+        }),
+
+
+
+
+      // 🔥 GET MY ASSIGNMENTS
+      getMyAssignments:
+        builder.query({
+
+          query: () =>
+            "/assignments/my-assignments",
 
           providesTags:
             ["Assignments"]
@@ -44,7 +55,7 @@ export const assignmentsApi =
 
         }),
 
-
+    
 
 
       // 🔥 UPDATE ASSIGNMENT
@@ -70,7 +81,7 @@ export const assignmentsApi =
 
         }),
 
-
+    
 
 
       // 🔥 DELETE ASSIGNMENT
@@ -91,7 +102,7 @@ export const assignmentsApi =
 
         }),
 
-
+    
 
 
       // 🔥 CREATE SUBMISSION
@@ -114,7 +125,7 @@ export const assignmentsApi =
 
         }),
 
-
+    
 
 
       // 🔥 GRADE SUBMISSION
@@ -151,6 +162,8 @@ export const assignmentsApi =
 export const {
 
   useGetAssignmentsQuery,
+
+  useGetMyAssignmentsQuery,
 
   useCreateAssignmentMutation,
 

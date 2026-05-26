@@ -1,27 +1,24 @@
+
 import {
   useEffect,
-  useState
+  useState,
 } from "react";
 
 import {
-  useCreateAssignmentMutation
+  useCreateAssignmentMutation,
 } from "../../../features/assignments/api/assignmentsApi";
 
 import {
-  useGetGroupsQuery
+  useGetGroupsQuery,
 } from "../../../features/groups/groupsApi";
 
 import {
-  useAppSelector
+  useAppSelector,
 } from "../../../hooks/useAppSelector";
 
-
-
 export default function CreateAssignmentModal({
-
   open,
-  onClose
-
+  onClose,
 }) {
 
   // 🔥 AUTH
@@ -36,8 +33,8 @@ export default function CreateAssignmentModal({
   const [
     createAssignment,
     {
-      isLoading
-    }
+      isLoading,
+    },
   ] =
     useCreateAssignmentMutation();
 
@@ -46,8 +43,9 @@ export default function CreateAssignmentModal({
   // 🔥 GROUPS
   const {
     data: groupsResponse,
-    isLoading: groupsLoading
-  } = useGetGroupsQuery();
+    isLoading: groupsLoading,
+  } =
+    useGetGroupsQuery();
 
 
 
@@ -56,47 +54,49 @@ export default function CreateAssignmentModal({
 
 
 
-  // 🔥 FORM
-  const [formData, setFormData] =
-    useState({
+  // 🔥 ERROR
+  const [
+    error,
+    setError,
+  ] = useState("");
 
+
+
+  // 🔥 INITIAL STATE
+  const initialForm =
+    {
       title: "",
-
       description: "",
-
       due_date: "",
-
       max_score: 10,
-
       attachment_url: "",
-
       attachment_type: "PDF",
-
       published: false,
-
       allow_comments: true,
-
       group_id: "",
-
-      teacher_id: ""
-
-    });
+      teacher_id: "",
+    };
 
 
 
+  // 🔥 FORM
+  const [
+    formData,
+    setFormData,
+  ] =
+    useState(initialForm);
 
-  // 🔥 AUTO SET TEACHER ID
+
+
+  // 🔥 AUTO SET TEACHER
   useEffect(() => {
 
     if (user?.teacher_id) {
 
       setFormData((prev) => ({
-
         ...prev,
-
         teacher_id:
-          user.teacher_id
-
+          user.id,
       }));
     }
 
@@ -104,29 +104,72 @@ export default function CreateAssignmentModal({
 
 
 
+  // 🔥 ESC CLOSE
+  useEffect(() => {
+
+    const handleEscape =
+      (e) => {
+
+        if (
+          e.key === "Escape"
+        ) {
+          onClose();
+        }
+      };
+
+    window.addEventListener(
+      "keydown",
+      handleEscape
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+
+  }, [onClose]);
+
+
 
   // 🔥 INPUT CHANGES
-  const handleChange = (e) => {
+  const handleChange =
+    (e) => {
 
-    const {
-      name,
-      value,
-      type,
-      checked
-    } = e.target;
+      const {
+        name,
+        value,
+        type,
+        checked,
+      } = e.target;
 
-    setFormData((prev) => ({
+      setFormData((prev) => ({
+        ...prev,
 
-      ...prev,
+        [name]:
+          type === "checkbox"
+            ? checked
+            : value,
+      }));
+    };
 
-      [name]:
-        type === "checkbox"
-          ? checked
-          : value
 
-    }));
-  };
 
+  // 🔥 RESET
+  const resetForm =
+    () => {
+
+      setFormData({
+        ...initialForm,
+
+        teacher_id:
+          user?.id || "",
+      });
+
+      setError("");
+    };
 
 
 
@@ -138,65 +181,91 @@ export default function CreateAssignmentModal({
 
       try {
 
+        setError("");
+
+
+
+        // 🔥 VALIDATION
+        if (
+          !formData.title.trim()
+        ) {
+
+          setError(
+            "Assignment title required"
+          );
+
+          return;
+        }
+
+        if (
+          !formData.group_id
+        ) {
+
+          setError(
+            "Select a group"
+          );
+
+          return;
+        }
+
+
+
+        const payload = {
+
+          ...formData,
+
+          title:
+            formData.title.trim(),
+
+          description:
+            formData.description.trim(),
+
+          max_score:
+            Number(
+              formData.max_score
+            ),
+        };
+
+
+
         console.log(
           "🚀 SENDING:",
-          formData
+          payload
         );
 
 
 
         await createAssignment(
-          formData
+          payload
         ).unwrap();
 
 
 
-
-        // 🔥 RESET
-        setFormData({
-
-          title: "",
-
-          description: "",
-
-          due_date: "",
-
-          max_score: 10,
-
-          attachment_url: "",
-
-          attachment_type: "PDF",
-
-          published: false,
-
-          allow_comments: true,
-
-          group_id: "",
-
-          teacher_id:
-            user?.teacher_id || ""
-
-        });
-
-
-
+        resetForm();
 
         onClose();
 
-      } catch (error) {
+      } catch (err) {
 
         console.error(
           "❌ CREATE ASSIGNMENT ERROR:",
-          error
+          err
+        );
+
+        setError(
+          err?.data?.message ||
+          err?.message ||
+          "Error creating assignment"
         );
       }
     };
 
 
 
-
-  if (!open) return null;
-
+  // 🔥 CLOSE IF NOT OPEN
+  if (!open) {
+    return null;
+  }
 
 
 
@@ -211,6 +280,7 @@ export default function CreateAssignmentModal({
       items-center
       justify-center
       p-6
+      overflow-y-auto
     ">
 
       <div className="
@@ -251,13 +321,12 @@ export default function CreateAssignmentModal({
           </div>
 
           <button
-
             onClick={onClose}
-
             className="
               text-gray-400
               hover:text-white
               text-2xl
+              transition-all
             "
           >
             ✕
@@ -265,6 +334,24 @@ export default function CreateAssignmentModal({
 
         </div>
 
+
+
+        {/* 🔥 ERROR */}
+        {error && (
+
+          <div className="
+            mb-5
+            bg-red-500/10
+            border
+            border-red-500/20
+            text-red-400
+            p-4
+            rounded-2xl
+          ">
+            {error}
+          </div>
+
+        )}
 
 
 
@@ -282,6 +369,7 @@ export default function CreateAssignmentModal({
             value={formData.title}
             onChange={handleChange}
             required
+            disabled={isLoading}
             className="
               w-full
               bg-gray-900
@@ -291,9 +379,10 @@ export default function CreateAssignmentModal({
               p-4
               text-white
               outline-none
+              focus:border-blue-500
+              disabled:opacity-50
             "
           />
-
 
 
 
@@ -304,6 +393,7 @@ export default function CreateAssignmentModal({
             placeholder="Write assignment instructions..."
             value={formData.description}
             onChange={handleChange}
+            disabled={isLoading}
             className="
               w-full
               bg-gray-900
@@ -313,18 +403,23 @@ export default function CreateAssignmentModal({
               p-4
               text-white
               outline-none
+              focus:border-blue-500
+              disabled:opacity-50
             "
           />
 
 
 
-
-          {/* 🔥 GROUP SELECT */}
+          {/* GROUP */}
           <select
             name="group_id"
             value={formData.group_id}
             onChange={handleChange}
             required
+            disabled={
+              isLoading ||
+              groupsLoading
+            }
             className="
               w-full
               bg-gray-900
@@ -355,7 +450,6 @@ export default function CreateAssignmentModal({
 
 
 
-
           {/* GRID */}
           <div className="
             grid
@@ -370,6 +464,7 @@ export default function CreateAssignmentModal({
               name="due_date"
               value={formData.due_date}
               onChange={handleChange}
+              disabled={isLoading}
               className="
                 bg-gray-900
                 border
@@ -382,13 +477,15 @@ export default function CreateAssignmentModal({
 
 
 
-
             {/* SCORE */}
             <input
               type="number"
               name="max_score"
+              min="1"
+              max="100"
               value={formData.max_score}
               onChange={handleChange}
+              disabled={isLoading}
               className="
                 bg-gray-900
                 border
@@ -403,7 +500,6 @@ export default function CreateAssignmentModal({
 
 
 
-
           {/* ATTACHMENT */}
           <input
             type="text"
@@ -411,6 +507,7 @@ export default function CreateAssignmentModal({
             placeholder="Attachment URL"
             value={formData.attachment_url}
             onChange={handleChange}
+            disabled={isLoading}
             className="
               w-full
               bg-gray-900
@@ -421,7 +518,6 @@ export default function CreateAssignmentModal({
               text-white
             "
           />
-
 
 
 
@@ -452,7 +548,6 @@ export default function CreateAssignmentModal({
 
 
 
-
             <label className="
               flex
               items-center
@@ -475,7 +570,6 @@ export default function CreateAssignmentModal({
 
 
 
-
           {/* ACTIONS */}
           <div className="
             flex
@@ -485,17 +579,17 @@ export default function CreateAssignmentModal({
           ">
 
             <button
-
               type="button"
-
               onClick={onClose}
-
+              disabled={isLoading}
               className="
                 px-5
                 py-3
                 rounded-2xl
                 bg-gray-800
+                hover:bg-gray-700
                 text-white
+                transition-all
               "
             >
               Cancel
@@ -503,17 +597,12 @@ export default function CreateAssignmentModal({
 
 
 
-
-
             <button
-
               type="submit"
-
               disabled={
                 isLoading ||
                 groupsLoading
               }
-
               className="
                 px-6
                 py-3
@@ -524,6 +613,7 @@ export default function CreateAssignmentModal({
                 disabled:cursor-not-allowed
                 text-white
                 font-bold
+                transition-all
               "
             >
 

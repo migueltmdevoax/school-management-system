@@ -1,21 +1,11 @@
 import * as gradesService from "./grades.service.js";
 
-import { calculateStudentRisk }
-from "../risk/risk.service.js";
-
-import {
-  emitStudentRiskUpdated,
-  emitStudentMetricsUpdated
-} from "../../realtime/emitters.js";
-
 
 
 // 🟣 CREATE GRADE
 export const createGrade = async (req, res) => {
 
   try {
-
-    console.log("🟣 createGrade controller reached");
 
     const {
       assignment_student_id,
@@ -50,44 +40,7 @@ export const createGrade = async (req, res) => {
         feedback
       });
 
-    console.log("✅ grade created", result);
-
-
-
-    // 🧠 TEMPORAL AVERAGE
-    // luego será real desde DB
-    const average = Number(grade);
-
-
-
-    // 🚨 CALCULATE RISK
-    const risk =
-      calculateStudentRisk(average);
-
-    console.log("🚨 calculated risk", risk);
-
-
-
-    // 💥 REALTIME RISK EVENT
-    emitStudentRiskUpdated({
-      studentId: result.studentId,
-      parentId: result.parentId || null,
-      average,
-      risk,
-    });
-
-
-
-    // 🔥 CENTRAL METRICS UPDATE
-    await emitStudentMetricsUpdated(
-      result.studentId
-    );
-
-    console.log("🔥 metrics updated emitted");
-
-
-
-    res.status(201).json(result);
+    return res.status(201).json(result);
 
   } catch (error) {
 
@@ -115,42 +68,38 @@ export const getAllGrades = async (req, res) => {
 
     const user = req.user;
 
-let grades;
+    let grades;
 
-// 🔥 ADMIN
-if (user.role === "admin") {
+    // 🔥 ADMIN
+    if (user.role === "admin") {
 
-  grades =
-    await gradesService.getAll();
-}
+      grades =
+        await gradesService.getAll();
+    }
 
+    // 🔥 TEACHER
+    else if (
+      user.role === "teacher"
+    ) {
 
-// 🔥 TEACHER
-else if (
-  user.role === "teacher"
-) {
+      grades =
+        await gradesService
+          .getByTeacherId(
+            user.teacher_id
+          );
+    }
 
-  grades =
-    await gradesService
-      .getByTeacherId(
-        user.teacher_id
-      );
-}
+    // 🔥 PARENT
+    else if (
+      user.role === "parent"
+    ) {
 
-
-// 🔥 PARENT
-else if (
-  user.role === "parent"
-) {
-
-  grades =
-    await gradesService
-      .getByParentId(
-        user.parent_id
-      );
-}
-
-res.json(grades);
+      grades =
+        await gradesService
+          .getByParentId(
+            user.parent_id
+          );
+    }
 
     res.json(grades);
 

@@ -1,5 +1,7 @@
 import teacherService
-  from "./teachers.service.js";
+from "./teachers.service.js";
+
+
 
 const getAllTeachers = async (
   req,
@@ -29,10 +31,10 @@ const getAllTeachers = async (
       message:
         "Error fetching teachers"
     });
-
   }
-
 };
+
+
 
 const getTeacherById = async (
   req,
@@ -54,7 +56,6 @@ const getTeacherById = async (
         message:
           "Teacher not found"
       });
-
     }
 
     return res.status(200).json({
@@ -74,10 +75,10 @@ const getTeacherById = async (
       message:
         "Error fetching teacher"
     });
-
   }
-
 };
+
+
 
 const createTeacher = async (
   req,
@@ -112,10 +113,10 @@ const createTeacher = async (
       message:
         "Error creating teacher"
     });
-
   }
-
 };
+
+
 
 const updateTeacher = async (
   req,
@@ -132,11 +133,6 @@ const updateTeacher = async (
           id,
           req.body
         );
-
-    req.io?.emit(
-      "teacher:updated",
-      teacher
-    );
 
     return res.status(200).json({
       success: true,
@@ -155,10 +151,10 @@ const updateTeacher = async (
       message:
         "Error updating teacher"
     });
-
   }
-
 };
+
+
 
 const deleteTeacher = async (
   req,
@@ -195,10 +191,10 @@ const deleteTeacher = async (
       message:
         "Error deleting teacher"
     });
-
   }
-
 };
+
+
 
 export default {
   getAllTeachers,

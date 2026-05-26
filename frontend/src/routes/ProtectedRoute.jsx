@@ -1,27 +1,28 @@
 import {
   Navigate,
+  Outlet,
 } from "react-router-dom";
 
 import {
   useAppSelector,
 } from "../hooks/useAppSelector";
 
-export default function ProtectedRoute({
-  children,
-  allowedRoles = [],
-}) {
 
+
+export default function ProtectedRoute() {
+
+  // 🔥 AUTH
   const {
-    role,
-    isAuthenticated,
+    token,
+    user,
   } = useAppSelector(
     (state) => state.auth
   );
 
 
 
-  // 🔥 NOT LOGGED
-  if (!isAuthenticated) {
+  // 🔥 NO SESSION
+  if (!token || !user) {
 
     return (
       <Navigate
@@ -29,26 +30,11 @@ export default function ProtectedRoute({
         replace
       />
     );
+
   }
 
 
 
-  // 🔥 ROLE BLOCKED
-  if (
-    allowedRoles.length > 0 &&
-    !allowedRoles.includes(role
-    )
-  ) {
-
-    return (
-      <Navigate
-        to="/"
-        replace
-      />
-    );
-  }
-
-
-
-  return children;
+  // 🔥 AUTHORIZED
+  return <Outlet />;
 }

@@ -15,12 +15,8 @@ export async function getAllStudents() {
     ORDER BY created_at DESC
   `);
 
-  const students =
-    result.rows;
+  const students = result.rows;
 
-
-
-  // 🔥 inject real metrics
   const studentsWithMetrics =
     await Promise.all(
 
@@ -33,16 +29,12 @@ export async function getAllStudents() {
             );
 
           return {
-
             ...student,
-
             metrics,
           };
         }
       )
     );
-
-
 
   return studentsWithMetrics;
 }

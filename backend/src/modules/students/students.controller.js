@@ -1,15 +1,6 @@
 import * as studentsService
 from "./students.service.js";
 
-import {
-
-  emitStudentCreated,
-
-  emitStudentUpdated,
-
-  emitStudentDeleted,
-
-} from "./students.emitters.js";
 
 
 
@@ -63,12 +54,6 @@ async (req, res) => {
 
 
 
-    // 🔥 REALTIME EMIT
-    emitStudentCreated(
-      student
-    );
-
-
 
     return res.status(201).json(
       student
@@ -107,12 +92,6 @@ async (req, res) => {
         req.body
       );
 
-
-
-    // 🔥 REALTIME EMIT
-    emitStudentUpdated(
-      updatedStudent
-    );
 
 
 
@@ -157,12 +136,6 @@ async (req, res) => {
       id
     );
 
-
-
-    // 🔥 REALTIME EMIT
-    emitStudentDeleted(
-      id
-    );
 
 
 

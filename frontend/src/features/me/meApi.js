@@ -42,37 +42,6 @@ export const meApi =
 
 
 
-      // 📚 MY ASSIGNMENTS
-      getMyAssignments:
-        builder.query({
-
-          query: () =>
-            "/me/assignments",
-
-          providesTags: [
-            "Assignments"
-          ],
-
-        }),
-
-
-
-
-      // 📝 MY GRADES
-      getMyGrades:
-        builder.query({
-
-          query: () =>
-            "/me/grades",
-
-          providesTags: [
-            "Grades"
-          ],
-
-        }),
-
-
-
 
       // 💳 MY PAYMENTS
       getMyPayments:
@@ -100,10 +69,6 @@ export const {
   useGetMyDashboardQuery,
 
   useGetMyStudentsQuery,
-
-  useGetMyAssignmentsQuery,
-
-  useGetMyGradesQuery,
 
   useGetMyPaymentsQuery,
 

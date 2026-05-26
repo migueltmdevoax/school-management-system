@@ -32,8 +32,10 @@ import incidentsRoutes
 import groupsRoutes
 from "./modules/groups/groups.routes.js";
 
-import meRoutes
-from "./modules/me/me.routes.js";
+import meRoutes from "./routes/me.routes.js";
+
+import notificationsRoutes
+from "./modules/notifications/notifications.routes.js";
 
 
 const app = express();
@@ -108,10 +110,13 @@ app.use(
   groupsRoutes
 );
 
+app.use("/api/me", meRoutes);
+
 app.use(
-  "/api/me",
-  meRoutes
+  "/api/notifications",
+  notificationsRoutes
 );
+
 
 
 

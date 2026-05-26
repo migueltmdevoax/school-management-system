@@ -95,6 +95,29 @@ export const emitToUser = (
 
 
 
+// 🔔 NOTIFICATION CREATED
+export const emitNotificationCreated =
+(
+
+  userId,
+  notification
+
+) => {
+
+  emitToUser(
+
+    userId,
+
+    EVENTS.NOTIFICATION_CREATED,
+
+    notification
+  );
+};
+
+
+
+
+
 // 🟣 INCIDENT CREATED
 export const emitIncidentCreated = (
   incident

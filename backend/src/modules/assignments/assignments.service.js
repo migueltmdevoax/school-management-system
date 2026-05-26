@@ -26,13 +26,7 @@ export const getAllAssignments = async () => {
       g.name AS group_name,
 
       t.first_name,
-      t.last_name,
-
-      COUNT(DISTINCT s.id)::int
-        AS submissions_count,
-
-      COUNT(DISTINCT st.id)::int
-        AS assigned_students
+      t.last_name
 
     FROM assignments a
 
@@ -42,18 +36,6 @@ export const getAllAssignments = async () => {
     LEFT JOIN teachers t
       ON t.id = a.teacher_id
 
-    LEFT JOIN assignment_submissions s
-      ON s.assignment_id = a.id
-
-    LEFT JOIN assignment_students st
-      ON st.assignment_id = a.id
-
-    GROUP BY
-      a.id,
-      g.name,
-      t.first_name,
-      t.last_name
-
     ORDER BY a.created_at DESC
 
   `;
@@ -62,6 +44,56 @@ export const getAllAssignments = async () => {
     await db.query(query);
 
   return rows;
+};
+
+// 🔥 GET ASSIGNMENTS BY TEACHER
+export const getAssignmentsByTeacher =
+async (teacherId) => {
+
+  const result = await db.query(
+
+    `
+    SELECT
+      *
+    FROM assignments
+
+    WHERE teacher_id = $1
+
+    ORDER BY created_at DESC
+    `,
+
+    [teacherId]
+  );
+
+  return result.rows;
+
+};
+
+// 🔥 GET ASSIGNMENTS BY PARENT
+export const getAssignmentsByParent =
+async (parentId) => {
+
+  const result = await db.query(
+
+    `
+    SELECT DISTINCT
+      a.*
+
+    FROM assignments a
+
+    INNER JOIN students s
+      ON s.group_id = a.group_id
+
+    WHERE s.parent_id = $1
+
+    ORDER BY a.created_at DESC
+    `,
+
+    [parentId]
+  );
+
+  return result.rows;
+
 };
 
 

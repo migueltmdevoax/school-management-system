@@ -3,11 +3,22 @@ import {
 } from "react";
 
 import {
-  useAppSelector,
-} from "../../../hooks/useAppSelector";
+
+  useGetMyNotificationsQuery,
+
+} from "../notificationsApi";
 
 import NotificationDropdown
 from "./NotificationDropdown";
+
+import UnreadBadge
+from "./UnreadBadge";
+
+import {
+
+  selectUnreadNotificationsCount,
+
+} from "../notificationsSelectors";
 
 
 
@@ -24,26 +35,22 @@ export default function NotificationBell() {
 
 
 
-  const notifications =
+  // 🔥 RTK QUERY
+  const {
 
-    useAppSelector(
+    data: notifications = [],
 
-      (state) =>
+  } = useGetMyNotificationsQuery();
 
-        state.notifications
-          .notifications
-    );
 
 
 
 
   const unreadCount =
 
-    notifications.filter(
-
-      notification =>
-        !notification.read
-    ).length;
+    selectUnreadNotificationsCount(
+      notifications
+    );
 
 
 
@@ -78,31 +85,10 @@ export default function NotificationBell() {
 
 
 
-        {/* 🟣 BADGE */}
-        {unreadCount > 0 && (
-
-          <span className="
-            absolute
-            -top-2
-            -right-2
-            bg-red-500
-            text-white
-            text-xs
-            font-bold
-            min-w-[22px]
-            h-[22px]
-            px-1
-            rounded-full
-            flex
-            items-center
-            justify-center
-            animate-pulse
-          ">
-
-            {unreadCount}
-
-          </span>
-        )}
+        {/* 🔥 NEW BADGE COMPONENT */}
+        <UnreadBadge
+          count={unreadCount}
+        />
 
       </button>
 
@@ -114,6 +100,7 @@ export default function NotificationBell() {
       {open && (
 
         <NotificationDropdown
+
           notifications={
             notifications
           }

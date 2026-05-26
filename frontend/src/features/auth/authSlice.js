@@ -16,6 +16,8 @@ const initialState = {
 
   isAuthenticated:
     !!token,
+
+  loading: false,
 };
 
 const authSlice = createSlice({

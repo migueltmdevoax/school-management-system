@@ -1,6 +1,6 @@
 import {
-  addNotification,
-} from "./notificationsSlice";
+  notificationsApi,
+} from "./notificationsApi";
 
 
 
@@ -10,55 +10,48 @@ export function notificationsRealtimeListeners(
 
   return [
 
-    // 🟣 INCIDENT CREATED
-    {
-      event: "incident_created",
-
-      handler: (payload) => {
-
-        store.dispatch(
-
-          addNotification({
-
-            type: "warning",
-
-            title:
-              "Nueva incidencia",
-
-            message:
-              payload.title ||
-              "Incidente registrado",
-          })
-        );
-      },
-    },
-
-
-
-
-
-
-    // 🟣 STUDENT RISK UPDATED
+    // 🔥 REALTIME NOTIFICATION
     {
       event:
-        "student_risk_updated",
+        "notification_created",
 
       handler: (payload) => {
 
-        store.dispatch(
+  store.dispatch(
 
-          addNotification({
+    notificationsApi.util
+      .updateQueryData(
 
-            type: "error",
+        "getMyNotifications",
 
-            title:
-              "Alumno en riesgo",
+        undefined,
 
-            message:
-              payload.studentName,
-          })
-        );
-      },
-    },
-  ];
+        (draft) => {
+
+          if (!draft) return;
+
+          const exists =
+
+            draft.some(
+              notification =>
+
+                notification.id ===
+                payload.id
+            );
+
+
+
+          if (!exists) {
+
+            draft.unshift(
+              payload
+            );
+          }
+        }
+      )
+  );
+},
+},
+
+];
 }

@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -10,16 +9,22 @@ import GradeForm
 from "../components/GradeForm";
 
 import {
-  useAuth
-} from "../../../context/AuthContext";
+  useAppSelector
+} from "../../../hooks/useAppSelector";
 
 import {
   hasPermission
 } from "../../../utils/permissions";
 
 import {
-  useGrades
-} from "../hooks/useGrades";
+  useGetGradesQuery,
+} from "../../../features/grades/api/gradesApi";
+
+import {
+  useCreateGradeMutation,
+  useUpdateGradeMutation,
+  useDeleteGradeMutation,
+} from "../../../features/grades/api/gradesApi";
 
 
 
@@ -27,24 +32,38 @@ export default function GradesPage() {
 
   const {
     user
-  } = useAuth();
+  } = useAppSelector(
+    (state) => state.auth
+  );
 
 
 
-  // 🔥 CUSTOM HOOK
+  // 🔥 QUERY
   const {
-
-    grades,
-    loading,
+    data: gradesResponse,
+    isLoading: loading,
     error,
+  } = useGetGradesQuery();
 
-    fetchGrades,
 
-    createGrade,
-    updateGrade,
-    deleteGrade,
 
-  } = useGrades();
+  const grades =
+    gradesResponse?.data || [];
+
+
+
+  // 🔥 MUTATIONS
+  const [
+    createGrade
+  ] = useCreateGradeMutation();
+
+  const [
+    updateGrade
+  ] = useUpdateGradeMutation();
+
+  const [
+    deleteGrade
+  ] = useDeleteGradeMutation();
 
 
 
@@ -57,16 +76,6 @@ export default function GradesPage() {
 
 
 
-  // 🔥 INITIAL FETCH
-  useEffect(() => {
-
-    fetchGrades();
-
-  }, []);
-
-
-
-
   // 🔥 SUBMIT
   const handleSubmit =
     async (data) => {
@@ -75,19 +84,17 @@ export default function GradesPage() {
 
         if (selectedGrade) {
 
-          await updateGrade(
-            selectedGrade.id,
-            data
-          );
+          await updateGrade({
+            id: selectedGrade.id,
+            data,
+          }).unwrap();
 
         } else {
 
           await createGrade(
             data
-          );
+          ).unwrap();
         }
-
-
 
         setSelectedGrade(null);
 
@@ -106,7 +113,8 @@ export default function GradesPage() {
 
       try {
 
-        await deleteGrade(id);
+        await deleteGrade(id)
+          .unwrap();
 
       } catch (err) {
 
@@ -120,16 +128,28 @@ export default function GradesPage() {
   return (
 
     <div className="
-      space-y-4
+      p-6
+      space-y-6
     ">
 
-      <h1 className="
-        text-xl
-        font-bold
-        text-white
-      ">
-        Grades
-      </h1>
+      <div>
+
+        <h1 className="
+          text-3xl
+          font-bold
+          text-white
+        ">
+          📝 Grades
+        </h1>
+
+        <p className="
+          text-gray-400
+          mt-1
+        ">
+          Gestión académica
+        </p>
+
+      </div>
 
 
 
@@ -148,7 +168,6 @@ export default function GradesPage() {
             selectedGrade={
               selectedGrade
             }
-            students={[]}
           />
 
         )
@@ -165,7 +184,7 @@ export default function GradesPage() {
           <p className="
             text-gray-400
           ">
-            Loading data...
+            Loading grades...
           </p>
 
         )
@@ -182,7 +201,7 @@ export default function GradesPage() {
           <p className="
             text-red-400
           ">
-            {error}
+            Error loading grades
           </p>
 
         )
@@ -215,35 +234,24 @@ export default function GradesPage() {
         !loading &&
         grades.length > 0 && (
 
-          <div className="card">
+          <GradeList
 
-            <GradeList
+            grades={grades}
 
-              grades={grades}
+            onEdit={
+              setSelectedGrade
+            }
 
-              students={[]}
+            onDelete={
+              handleDelete
+            }
 
-              onEdit={
-                setSelectedGrade
-              }
-
-              onDelete={
-                handleDelete
-              }
-
-              role={
-                user?.role
-              }
-
-            />
-
-          </div>
+          />
 
         )
 
       }
 
     </div>
-
   );
 }

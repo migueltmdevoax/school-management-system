@@ -4,6 +4,7 @@ from "express";
 import {
 
   getAssignments,
+  getMyAssignments,
   getAssignmentById,
   createAssignment,
   updateAssignment,
@@ -45,6 +46,21 @@ router.get(
   ),
 
   getAssignments
+);
+
+router.get(
+
+  "/my-assignments",
+
+  verifyToken,
+
+  authorizeRoles(
+    "admin",
+    "teacher",
+    "parent"
+  ),
+
+  getMyAssignments
 );
 
 

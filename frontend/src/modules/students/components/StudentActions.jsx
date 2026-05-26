@@ -1,234 +1,110 @@
-import {
-  useState,
-} from "react";
-
-import {
-  useToast,
-} from "../../../context/ToastContext";
-
+// 🔥 StudentActions.jsx
 
 export default function StudentActions({
-
   student,
-
-  onDelete,
-
   onEdit,
-
+  onDelete,
+  onView,
+  onAssignment,
+  onIncident,
 }) {
-
-  const [
-
-    isEditing,
-
-    setIsEditing,
-
-  ] = useState(false);
-
-
-
-  const [
-
-    name,
-
-    setName,
-
-  ] = useState(
-    student.name
-  );
-
-
-
-  const handleSave =
-    async () => {
-
-      try {
-
-        await onEdit(
-          student.id,
-          {
-            name,
-          }
-        );
-
-        setIsEditing(false);
-
-      } catch (err) {
-
-        console.error(err);
-      }
-    };
-
-    const { showToast } =
-  useToast();
-
-
-
-  const handleDelete =
-  async () => {
-
-    const confirmed =
-      window.confirm(
-        `¿Eliminar a ${student.name}?`
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-
-
-    // 🟡 PENDING
-    showToast(
-      "⏳ Eliminando alumno...",
-      "loading"
-    );
-
-
-
-    try {
-
-      await onDelete(
-        student.id
-      );
-
-
-
-      // 🟢 SUCCESS
-      showToast(
-        "✅ Alumno eliminado",
-        "success"
-      );
-
-    } catch (err) {
-
-      console.error(err);
-
-
-
-      // 🔴 ERROR
-      showToast(
-        "❌ Error eliminando alumno",
-        "error"
-      );
-    }
-  };
-
-    
-
-
 
   return (
 
-    <div className="space-y-4">
+    <div className="
+      grid
+      grid-cols-2
+      gap-3
+      mt-6
+    ">
 
-      {/* 🟣 EDIT MODE */}
-      {isEditing && (
+      <button
+        onClick={() =>
+          onAssignment?.(student)
+        }
+        className="
+          bg-purple-600
+          hover:bg-purple-700
+          text-white
+          py-3
+          rounded-2xl
+          font-bold
+          transition-all
+        "
+      >
+        📚 Assignment
+      </button>
 
-        <div className="
-          flex
-          gap-2
-        ">
+      <button
+        onClick={() =>
+          onIncident?.(student)
+        }
+        className="
+          bg-yellow-600
+          hover:bg-yellow-700
+          text-white
+          py-3
+          rounded-2xl
+          font-bold
+          transition-all
+        "
+      >
+        🚨 Incident
+      </button>
 
-          <input
+      <button
+        onClick={() =>
+          onView?.(student)
+        }
+        className="
+          bg-blue-600
+          hover:bg-blue-700
+          text-white
+          py-3
+          rounded-2xl
+          font-bold
+          transition-all
+        "
+      >
+        👁 View
+      </button>
 
-            value={name}
+      <button
+        onClick={() =>
+          onEdit?.(student)
+        }
+        className="
+          bg-gray-800
+          hover:bg-gray-700
+          text-white
+          py-3
+          rounded-2xl
+          font-bold
+          transition-all
+        "
+      >
+        ✏️ Edit
+      </button>
 
-            onChange={(e) =>
-              setName(
-                e.target.value
-              )
-            }
-
-            className="
-              flex-1
-              bg-gray-800
-              text-white
-              px-3
-              py-2
-              rounded-lg
-              border
-              border-gray-700
-            "
-          />
-
-
-
-          <button
-
-            onClick={handleSave}
-
-            className="
-              bg-green-600
-              hover:bg-green-700
-              transition-all
-              text-white
-              px-4
-              rounded-lg
-            "
-          >
-            Guardar
-          </button>
-
-        </div>
-      )}
-
-
-
-      {/* 🟣 ACTIONS */}
-      <div className="
-        flex
-        gap-3
-      ">
-
-        {/* EDIT */}
-        <button
-
-          onClick={() =>
-            setIsEditing(
-              (prev) => !prev
-            )
-          }
-
-          className="
-            flex-1
-            bg-blue-600
-            hover:bg-blue-700
-            transition-all
-            text-white
-            py-2
-            rounded-lg
-          "
-        >
-
-          {isEditing
-            ? "Cancelar"
-            : "Editar"}
-
-        </button>
-
-
-
-        {/* DELETE */}
-        <button
-
-          onClick={handleDelete}
-
-          className="
-            flex-1
-            bg-red-600
-            hover:bg-red-700
-            transition-all
-            text-white
-            py-2
-            rounded-lg
-          "
-        >
-          Eliminar
-        </button>
-
-      </div>
+      <button
+        onClick={() =>
+          onDelete?.(student)
+        }
+        className="
+          col-span-2
+          bg-red-600
+          hover:bg-red-700
+          text-white
+          py-3
+          rounded-2xl
+          font-bold
+          transition-all
+        "
+      >
+        🗑 Delete Student
+      </button>
 
     </div>
+
   );
 }

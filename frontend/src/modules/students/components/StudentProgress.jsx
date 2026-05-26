@@ -1,17 +1,34 @@
-export default function StudentProgress({ progress }) {
+export default function StudentProgress({
+  progress,
+}) {
 
   return (
+
     <div className="mt-5">
 
-      <div className="flex justify-between mb-2">
-        <span className="text-gray-300 text-sm">
+      <div className="
+        flex
+        justify-between
+        mb-2
+      ">
+
+        <span className="
+          text-gray-300
+          text-sm
+        ">
           Progreso
         </span>
 
-        <span className="text-gray-400 text-sm">
-          {progress}%
+        <span className="
+          text-gray-400
+          text-sm
+        ">
+          {progress || 0}%
         </span>
+
       </div>
+
+
 
       <div className="
         w-full
@@ -20,6 +37,7 @@ export default function StudentProgress({ progress }) {
         rounded-full
         overflow-hidden
       ">
+
         <div
           className="
             h-full
@@ -29,9 +47,10 @@ export default function StudentProgress({ progress }) {
             duration-500
           "
           style={{
-            width: `${progress}%`
+            width: `${progress || 0}%`
           }}
         />
+
       </div>
 
     </div>

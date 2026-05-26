@@ -1,11 +1,6 @@
 import { studentsApi }
 from "../features/students/studentsApi";
 
-import {
-  addNotification,
-} from "../features/notifications/notificationsSlice";
-
-
 
 export const realtimeHandlers = {
 
@@ -113,15 +108,4 @@ export const realtimeHandlers = {
 
 
 
-
-
-
-  // 🟣 GLOBAL NOTIFICATIONS
-  notification_created:
-    (store, payload) => {
-
-      store.dispatch(
-        addNotification(payload)
-      );
-    },
 };

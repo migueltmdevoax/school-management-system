@@ -6,7 +6,7 @@ export default function NotificationItem({
 
   const date =
     new Date(
-      notification.createdAt
+      notification.created_at
     );
 
 
@@ -61,7 +61,7 @@ export default function NotificationItem({
 
 
 
-        {!notification.read && (
+        {!notification.is_read && (
 
           <div className="
             w-2

@@ -3,9 +3,11 @@ import {
 } from "@reduxjs/toolkit";
 
 
+
 // 🟣 ROOT REDUCER
 import rootReducer
   from "./rootReducer";
+
 
 
 // 🟣 RTK QUERY
@@ -14,9 +16,17 @@ import {
 } from "../app/api/apiSlice";
 
 
+
 // 🟣 NOTIFICATIONS
 import notificationsReducer
   from "../features/notifications/notificationsSlice";
+
+
+
+// 🟣 TOAST
+import toastReducer
+  from "../features/toast/toastSlice";
+
 
 
 // 🟣 REALTIME
@@ -24,6 +34,11 @@ import {
   registerRealtime,
 } from "../realtime/registerRealtime";
 
+import loadingReducer
+from "../features/loading/loadingSlice";
+
+import modalReducer
+from "../features/modal/modalSlice";
 
 
 
@@ -37,16 +52,31 @@ export const store =
       ...rootReducer,
 
 
+
       // 🔥 RTK QUERY
       [apiSlice.reducerPath]:
         apiSlice.reducer,
+
 
 
       // 🔥 NOTIFICATIONS
       notifications:
         notificationsReducer,
 
+
+
+      // 🔥 GLOBAL TOASTS
+      toast:
+        toastReducer,
+
+      loading:
+      loadingReducer, 
+
+      modal:
+      modalReducer,
     },
+
+
 
 
 
@@ -63,11 +93,14 @@ export const store =
 
 
 
+
+
     devTools:
       import.meta.env.MODE !==
       "production",
 
   });
+
 
 
 

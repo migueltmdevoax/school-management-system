@@ -4,219 +4,362 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import {
-  useAppSelector,
-} from "../hooks/useAppSelector";
 
 
-// 🟣 ROUTES
-import ProtectedRoute
-from "../routes/ProtectedRoute";
-
-
-// 🟣 LAYOUTS
+// 🔥 LAYOUT
 import AppLayout
 from "../layouts/AppLayout";
 
 
-// 🟣 PUBLIC
-import HomePage
-from "../website/pages/HomePage";
 
+// 🔥 ROUTES
+import ProtectedRoute
+from "../routes/ProtectedRoute";
+
+import RoleRoute
+from "../routes/RoleRoute";
+
+
+
+// 🔥 AUTH
 import LoginPage
 from "../modules/auth/pages/LoginPage";
 
 
-// 🟣 ADMIN
-import DashboardPage
-from "../modules/dashboard/pages/DashboardPage";
 
+// 🔥 ROLE DASHBOARDS
+import AdminDashboard
+from "../modules/admin/pages/AdminDashboard";
+
+import TeacherDashboard
+from "../modules/teacher/pages/TeacherDashboard";
+
+import ParentDashboard
+from "../modules/parent/pages/ParentDashboard";
+
+
+
+// 🔥 ADMIN MODULES
 import StudentsPage
 from "../modules/students/pages/StudentsPage";
 
 import TeachersPage
 from "../modules/teacher/pages/TeachersPage";
 
-import GradesPage
-from "../modules/grades/pages/GradesPage";
 
 
-// 🟣 TEACHER
-import TeacherDashboard
-from "../modules/teacher/pages/TeacherDashboard";
-
+// 🔥 SHARED MODULES
 import AssignmentsPage
 from "../modules/assignments/pages/AssignmentsPage";
 
+import GradesPage
+from "../modules/grades/pages/GradesPage";
 
-// 🟣 PARENT
-import ParentDashboard
-from "../modules/parents/pages/ParentDashboard";
+import RoleBasedRedirect
+from "../routes/RoleBasedRedirect";
 
-
-
-
-
-function App() {
-
-  const {
-    isAuthenticated,
-  } = useAppSelector(
-    (state) => state.auth
-  );
+import IncidentsPage
+from "../modules/incidents/pages/IncidentsPage";
 
 
+
+export default function App() {
 
   return (
 
-    <Routes>
 
-      {/* 🌍 PUBLIC */}
-      <Route
-        path="/"
-        element={<HomePage />}
-      />
+      <Routes>
 
 
 
-      {/* 🔐 LOGIN */}
-      <Route
-        path="/login"
-        element={
-          isAuthenticated
-            ? <Navigate to="/app/dashboard" />
-            : <LoginPage />
-        }
-      />
+        {/* ===================================================== */}
+        {/* 🔥 PUBLIC */}
+        {/* ===================================================== */}
+
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
 
 
 
-      {/* 🛡️ ADMIN APP */}
-      <Route
 
-        path="/app"
 
-        element={
 
-          <ProtectedRoute
-            allowedRoles={[
-              "admin",
-              "teacher"
-            ]}
+
+
+        {/* ===================================================== */}
+        {/* 🔥 PROTECTED */}
+        {/* ===================================================== */}
+
+        <Route element={<ProtectedRoute />}>
+
+          <Route
+            path="/app"
+            element={<AppLayout />}
           >
 
-            <AppLayout />
 
-          </ProtectedRoute>
 
-        }
-      >
 
-        {/* 🟣 ADMIN DASHBOARD */}
+
+
+            {/* ===================================================== */}
+            {/* 🔥 DEFAULT REDIRECT */}
+            {/* ===================================================== */}
+
+            <Route
+            index
+            element={
+                   <RoleBasedRedirect />
+                 }
+              />
+
+
+
+
+            {/* ===================================================== */}
+            {/* 🔥 ADMIN */}
+            {/* ===================================================== */}
+
+            <Route
+              path="admin/dashboard"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "admin",
+                  ]}
+                >
+
+                  <AdminDashboard />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+            <Route
+              path="students"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "admin",
+                  ]}
+                >
+
+                  <StudentsPage />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+            <Route
+              path="teachers"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "admin",
+                  ]}
+                >
+
+                  <TeachersPage />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+
+            {/* ===================================================== */}
+            {/* 🔥 TEACHER */}
+            {/* ===================================================== */}
+
+            <Route
+              path="teacher/dashboard"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "teacher",
+                  ]}
+                >
+
+                  <TeacherDashboard />
+
+                </RoleRoute>
+
+              }
+            />
+
+            <Route
+  path="incidents"
+  element={
+
+    <RoleRoute
+      allowedRoles={[
+        "admin",
+        "teacher",
+      ]}
+    >
+
+      <IncidentsPage />
+
+    </RoleRoute>
+
+  }
+/>
+
+
+
+
+
+
+
+
+            {/* ===================================================== */}
+            {/* 🔥 PARENT */}
+            {/* ===================================================== */}
+
+            <Route
+              path="parent/dashboard"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "parent",
+                  ]}
+                >
+
+                  <ParentDashboard />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+
+            {/* ===================================================== */}
+            {/* 🔥 SHARED */}
+            {/* ===================================================== */}
+
+            <Route
+              path="assignments"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "admin",
+                    "teacher",
+                    "parent",
+                  ]}
+                >
+
+                  <AssignmentsPage />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+
+            <Route
+              path="grades"
+              element={
+
+                <RoleRoute
+                  allowedRoles={[
+                    "admin",
+                    "teacher",
+                    "parent",
+                  ]}
+                >
+
+                  <GradesPage />
+
+                </RoleRoute>
+
+              }
+            />
+
+
+
+
+
+
+
+
+            {/* ===================================================== */}
+            {/* 🔥 APP FALLBACK */}
+            {/* ===================================================== */}
+
+            <Route
+  path="*"
+  element={
+    <RoleBasedRedirect />
+  }
+/>
+
+          </Route>
+
+        </Route>
+
+
+
+
+
+
+
+
+        {/* ===================================================== */}
+        {/* 🔥 GLOBAL FALLBACK */}
+        {/* ===================================================== */}
+
         <Route
-          path="dashboard"
-          element={<DashboardPage />}
+          path="*"
+          element={
+            <Navigate
+              to="/login"
+              replace
+            />
+          }
         />
 
-
-
-        {/* 🟣 STUDENTS */}
-        <Route
-          path="students"
-          element={<StudentsPage />}
-        />
-
-
-
-        {/* 🟣 TEACHERS CRUD */}
-        <Route
-          path="teachers"
-          element={<TeachersPage />}
-        />
-
-
-
-
-        {/* 🟣 GRADES */}
-        <Route
-          path="grades"
-          element={<GradesPage />}
-        />
-
-
-
-        {/* 🟣 ASSIGNMENTS */}
-        <Route
-          path="assignments"
-          element={<AssignmentsPage />}
-        />
-
-
-        {/* 🟣 PARENTS */}
-        <Route
-          path="parents"
-          element={<ParentDashboard />}
-        />
-
-
-
-        {/* 👨‍🏫 TEACHER DASHBOARD */}
-        <Route
-          path="teacher/dashboard"
-          element={<TeacherDashboard />}
-        />
-
-
-
-      </Route>
-
-
-
-
-
-      {/* 👨‍👩‍👧 PARENT PANEL */}
-      <Route
-
-        path="/parent"
-
-        element={
-
-          <ProtectedRoute
-            allowedRoles={[
-              "parent"
-            ]}
-          >
-
-            <AppLayout />
-
-          </ProtectedRoute>
-
-        }
-      >
-
-        <Route
-          index
-          element={<ParentDashboard />}
-        />
-
-      </Route>
-
-
-
-
-
-      {/* ❌ FALLBACK */}
-      <Route
-        path="*"
-        element={
-          <Navigate to="/" />
-        }
-      />
-
-    </Routes>
+      </Routes>
 
   );
 
 }
-
-export default App;

@@ -42,6 +42,70 @@ async (req, res) => {
   }
 };
 
+// 🔥 GET MY ASSIGNMENTS
+export const getMyAssignments =
+async (req, res) => {
+
+  try {
+
+    const user = req.user;
+
+    let assignments;
+
+
+
+
+    // 🔥 ADMIN
+    if (user.role === "admin") {
+
+      assignments =
+        await assignmentsService.getAllAssignments();
+    }
+
+
+
+
+    // 🔥 TEACHER
+    else if (user.role === "teacher") {
+
+      assignments =
+        await assignmentsService.getAssignmentsByTeacher(
+          user.teacher_id
+        );
+    }
+
+
+
+
+    // 🔥 PARENT
+    else if (user.role === "parent") {
+
+      assignments =
+        await assignmentsService.getAssignmentsByParent(
+          user.parent_id
+        );
+    }
+
+
+
+
+    return res.json({
+      success: true,
+      data: assignments
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
 
 
 // 🔥 GET ONE

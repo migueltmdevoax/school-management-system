@@ -1,12 +1,12 @@
-import {
-  NavLink,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { useMemo } from "react";
 
 import {
   useDispatch,
 } from "react-redux";
+
+import {
+  useNavigate,
+} from "react-router-dom";
 
 import {
   logout,
@@ -20,26 +20,29 @@ import {
   useAppSelector,
 } from "../hooks/useAppSelector";
 
-import NotificationBell
-from "../features/notifications/components/NotificationBell";
+import AdminSidebar
+from "./sidebars/AdminSidebar";
+
+import TeacherSidebar
+from "./sidebars/TeacherSidebar";
+
+import ParentSidebar
+from "./sidebars/ParentSidebar";
 
 
 
 export default function Sidebar() {
 
-  // 🟣 REDUX
+  // 🔥 REDUX
   const dispatch =
     useDispatch();
 
   const navigate =
     useNavigate();
 
-  const location =
-    useLocation();
 
 
-
-  // 🟣 AUTH
+  // 🔥 AUTH
   const {
     user,
   } = useAppSelector(
@@ -48,46 +51,7 @@ export default function Sidebar() {
 
 
 
-  // 🟣 ROLE ACCESS
-  const canManageAcademic = true;
-
-
-
-
-  // 🟣 ACTIVE LINK STYLES
-  const linkClass =
-    ({ isActive }) => `
-      transition-all
-      duration-200
-      rounded-xl
-      px-4
-      py-3
-      font-medium
-      flex
-      items-center
-      gap-3
-
-      ${
-        isActive
-
-          ? `
-            bg-blue-600
-            text-white
-            shadow-lg
-          `
-
-          : `
-            text-gray-300
-            hover:bg-gray-800
-            hover:text-white
-          `
-      }
-    `;
-
-
-
-
-  // 🟣 LOGOUT
+  // 🔥 LOGOUT
   const handleLogout =
     () => {
 
@@ -115,6 +79,37 @@ export default function Sidebar() {
 
 
 
+  // 🔥 ROLE ENGINE
+  const role =
+    user?.role?.toLowerCase();
+
+
+
+
+  // 🔥 SIDEBAR SWITCHER
+  const SidebarComponent =
+    useMemo(() => {
+
+      switch (role) {
+
+        case "admin":
+          return AdminSidebar;
+
+        case "teacher":
+          return TeacherSidebar;
+
+        case "parent":
+          return ParentSidebar;
+
+        default:
+          return AdminSidebar;
+
+      }
+
+    }, [role]);
+
+
+
 
   return (
 
@@ -131,7 +126,7 @@ export default function Sidebar() {
       p-5
     ">
 
-      {/* 🟣 TOP */}
+      {/* 🔥 TOP */}
       <div>
 
         {/* 🔥 LOGO */}
@@ -155,22 +150,6 @@ export default function Sidebar() {
           </p>
 
         </div>
-
-
-
-
-
-        {/* 🔔 NOTIFICATIONS */}
-        <div className="
-          flex
-          justify-end
-          mb-6
-        ">
-
-          <NotificationBell />
-
-        </div>
-
 
 
 
@@ -212,7 +191,7 @@ export default function Sidebar() {
             capitalize
           ">
 
-            {user?.role}
+            {role}
 
           </p>
 
@@ -221,114 +200,15 @@ export default function Sidebar() {
 
 
 
-
-        {/* 🔥 NAVIGATION */}
-        <nav className="
-          flex
-          flex-col
-          gap-6
-        ">
-
-          {/* 🟣 CORE */}
-          <div className="space-y-2">
-
-            <p className="
-              text-gray-500
-              text-xs
-              uppercase
-              tracking-widest
-              px-2
-            ">
-              Core
-            </p>
-
-            <NavLink
-              to="/app/dashboard"
-              className={linkClass}
-            >
-              📊 Dashboard
-            </NavLink>
-
-            <NavLink
-              to="/app/students"
-              className={linkClass}
-            >
-              🎓 Students
-            </NavLink>
-
-            <NavLink
-              to="/app/teachers"
-              className={linkClass}
-            >
-              👨‍🏫 Teachers
-            </NavLink>
-
-          </div>
-
-
-
-
-
-          {/* 🟣 OPERATIONS */}
-          {canManageAcademic && (
-
-            <div className="space-y-2">
-
-              <p className="
-                text-gray-500
-                text-xs
-                uppercase
-                tracking-widest
-                px-2
-              ">
-                Operations
-              </p>
-
-              <NavLink
-                to="/app/teacher/dashboard"
-                className={linkClass}
-              >
-                🔥 Teacher Dashboard
-              </NavLink>
-
-
-              {/* ASSIGNMENTS */}
-              <NavLink
-                to="/app/assignments"
-                className={linkClass}
-              >
-                📚 Assignments
-              </NavLink>
-
-
-              <NavLink
-                to="/app/grades"
-                className={linkClass}
-              >
-                📝 Grades
-              </NavLink>
-
-              <NavLink
-                to="/app/parents"
-                className={linkClass}
-              >
-                👨‍👩‍👧 Parents
-              </NavLink>
-
-            </div>
-
-          )}
-
-        </nav>
+        {/* 🔥 DYNAMIC SIDEBAR */}
+        <SidebarComponent />
 
       </div>
 
 
 
 
-
-
-      {/* 🟣 BOTTOM */}
+      {/* 🔥 BOTTOM */}
       <div>
 
         <button
@@ -357,6 +237,5 @@ export default function Sidebar() {
       </div>
 
     </aside>
-
   );
 }
