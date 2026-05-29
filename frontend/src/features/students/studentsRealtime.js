@@ -2,7 +2,13 @@ import {
   studentsApi,
 } from "./studentsApi";
 
+import {
+  apiSlice
+} from "../../app/api/apiSlice";
 
+import {
+  EVENTS
+} from "../../constants/events";
 
 export function studentsRealtimeListeners(
   store
@@ -10,124 +16,218 @@ export function studentsRealtimeListeners(
 
   return [
 
-    // 🟣 STUDENT UPDATED
+    /*
+    |--------------------------------------------------------------------------
+    | 🟣 STUDENT UPDATED
+    |--------------------------------------------------------------------------
+    */
+
     {
-      event: "student_updated",
+      event:
+        EVENTS.STUDENT_UPDATED,
 
-      handler: (updatedStudent) => {
+      handler:
+        (updatedStudent) => {
 
-        store.dispatch(
+          store.dispatch(
 
-          studentsApi.util
-            .updateQueryData(
+            studentsApi.util
+              .updateQueryData(
 
-              "getStudents",
+                "getStudents",
 
-              undefined,
+                undefined,
 
-              (draft) => {
+                (draft) => {
 
-                const index =
+                  const index =
 
-                  draft.findIndex(
+                    draft.findIndex(
+                      (student) =>
+
+                        student.id ===
+                        updatedStudent.id
+                    );
+
+
+
+                  if (index !== -1) {
+
+                    draft[index] = {
+
+                      ...draft[index],
+
+                      ...updatedStudent,
+
+                    };
+
+                  }
+
+                }
+
+              )
+
+          );
+
+        },
+
+    },
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🟣 STUDENT CREATED
+    |--------------------------------------------------------------------------
+    */
+
+    {
+      event:
+        EVENTS.STUDENT_CREATED,
+
+      handler:
+        (newStudent) => {
+
+          store.dispatch(
+
+            studentsApi.util
+              .updateQueryData(
+
+                "getStudents",
+
+                undefined,
+
+                (draft) => {
+
+                  const exists =
+
+                    draft.some(
+                      (student) =>
+
+                        student.id ===
+                        newStudent.id
+                    );
+
+
+
+                  if (!exists) {
+
+                    draft.unshift(
+                      newStudent
+                    );
+
+                  }
+
+                }
+
+              )
+
+          );
+
+        },
+
+    },
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🟣 STUDENT DELETED
+    |--------------------------------------------------------------------------
+    */
+
+    {
+      event:
+        EVENTS.STUDENT_DELETED,
+
+      handler:
+        (studentId) => {
+
+          store.dispatch(
+
+            studentsApi.util
+              .updateQueryData(
+
+                "getStudents",
+
+                undefined,
+
+                (draft) =>
+
+                  draft.filter(
                     (student) =>
 
-                      student.id ===
-                      updatedStudent.id
-                  );
+                      student.id !==
+                      studentId
+                  )
 
+              )
 
+          );
 
-                if (index !== -1) {
+        },
 
-                  draft[index] = {
-
-                    ...draft[index],
-
-                    ...updatedStudent,
-                  };
-                }
-              }
-            )
-        );
-      },
     },
 
 
 
 
 
-    // 🟣 STUDENT CREATED
+
+    /*
+    |--------------------------------------------------------------------------
+    | 🟣 STUDENT METRICS UPDATED
+    |--------------------------------------------------------------------------
+    */
+
     {
-      event: "student_created",
+      event:
+        EVENTS.STUDENT_METRICS_UPDATED,
 
-      handler: (newStudent) => {
+      handler:
+        (payload) => {
 
-        store.dispatch(
-
-          studentsApi.util
-            .updateQueryData(
-
-              "getStudents",
-
-              undefined,
-
-              (draft) => {
-
-                const exists =
-
-                  draft.some(
-                    (student) =>
-
-                      student.id ===
-                      newStudent.id
-                  );
+          const {
+            studentId,
+            metrics,
+          } = payload;
 
 
 
-                if (!exists) {
+          store.dispatch(
 
-                  draft.unshift(
-                    newStudent
-                  );
+            apiSlice.util
+              .updateQueryData(
+
+                "getStudentProfile",
+
+                studentId,
+
+                (draft) => {
+
+                  if (!draft?.data)
+                    return;
+
+
+
+                  draft.data.metrics =
+                    metrics.metrics;
+
                 }
-              }
-            )
-        );
-      },
+
+              )
+
+          );
+
+        },
+
     },
 
-
-
-
-
-
-    // 🟣 STUDENT DELETED
-    {
-      event: "student_deleted",
-
-      handler: (studentId) => {
-
-        store.dispatch(
-
-          studentsApi.util
-            .updateQueryData(
-
-              "getStudents",
-
-              undefined,
-
-              (draft) =>
-
-                draft.filter(
-                  (student) =>
-
-                    student.id !==
-                    studentId
-                )
-            )
-        );
-      },
-    },
   ];
+
 }

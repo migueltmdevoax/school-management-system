@@ -247,6 +247,101 @@ export const studentsApi =
         }),
 
 
+            // 🟣 BULK DELETE STUDENTS
+      bulkDeleteStudents:
+        builder.mutation({
+
+          query: (studentIds) => ({
+
+            url:
+              "/students/bulk-delete",
+
+            method:
+              "POST",
+
+            body: {
+              studentIds,
+            },
+
+          }),
+
+
+
+
+          async onQueryStarted(
+
+            studentIds,
+
+            {
+
+              dispatch,
+
+              queryFulfilled,
+
+            }
+
+          ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | 🟣 OPTIMISTIC DELETE
+            |--------------------------------------------------------------------------
+            */
+
+            const patchResult =
+
+              dispatch(
+
+                studentsApi.util
+                  .updateQueryData(
+
+                    "getStudents",
+
+                    undefined,
+
+                    (draft) => {
+
+                      return draft.filter(
+
+                        (student) =>
+
+                          !studentIds.includes(
+                            student.id
+                          )
+
+                      );
+
+                    }
+
+                  )
+
+              );
+
+
+
+
+            try {
+
+              await queryFulfilled;
+
+            } catch {
+
+              patchResult.undo();
+
+            }
+
+          },
+
+
+
+
+          invalidatesTags: [
+            TAG_TYPES.STUDENTS
+          ],
+
+        }),
+
+
 
 
 
@@ -391,5 +486,7 @@ export const {
   useDeleteStudentMutation,
 
   useUpdateStudentMutation,
+
+  useBulkDeleteStudentsMutation,
 
 } = studentsApi;

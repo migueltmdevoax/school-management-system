@@ -8,8 +8,11 @@ import {
 
 import {
   getStudentMetrics,
-} from "../modules/students/studentMetrics.service.js";
+} from "../modules/students/students.metrics.service.js";
 
+import {
+  getDashboardMetrics,
+} from "../modules/dashboard/dashboard.service.js";
 
 
 
@@ -94,7 +97,6 @@ export const emitToUser = (
 
 
 
-
 // 🔔 NOTIFICATION CREATED
 export const emitNotificationCreated =
 (
@@ -117,13 +119,11 @@ export const emitNotificationCreated =
 
 
 
-
-// 🟣 INCIDENT CREATED
+// 🚨 INCIDENT CREATED
 export const emitIncidentCreated = (
   incident
 ) => {
 
-  // 🟣 padres
   emitToRoom(
 
     `parent:${incident.parentId}`,
@@ -135,7 +135,6 @@ export const emitIncidentCreated = (
 
 
 
-  // 🟣 alumno
   emitToRoom(
 
     `student:${incident.studentId}`,
@@ -147,7 +146,6 @@ export const emitIncidentCreated = (
 
 
 
-  // 🟣 admins
   emitToRole(
 
     "admin",
@@ -161,17 +159,9 @@ export const emitIncidentCreated = (
 
 
 
-
-// 🟣 STUDENT RISK UPDATED
+// ⚠️ STUDENT RISK UPDATED
 export const emitStudentRiskUpdated =
 (payload) => {
-
-  console.log(
-    "🔥 emitStudentRiskUpdated",
-    payload
-  );
-
-
 
   emitToRoom(
 
@@ -208,8 +198,7 @@ export const emitStudentRiskUpdated =
 
 
 
-
-// 🟣 STUDENT METRICS UPDATED
+// 📊 STUDENT METRICS UPDATED
 export const emitStudentMetricsUpdated =
 async (studentId) => {
 
@@ -247,9 +236,93 @@ async (studentId) => {
     }
   );
 
+};
+
+
+
+
+// 🟣 ACTIVITY CREATED
+export const emitActivityCreated = (
+
+  entityType,
+
+  entityId,
+
+  activity
+
+) => {
+
+  emitToRoom(
+
+    `${entityType}:${entityId}`,
+
+    EVENTS.ACTIVITY_CREATED,
+
+    activity
+
+  );
+
+
+
+  emitToRole(
+
+    "admin",
+
+    EVENTS.ACTIVITY_CREATED,
+
+    activity
+  );
+
+};
+
+
+ //DASHBOARD
+
+ export const emitDashboardUpdated =
+async () => {
+
+  const metrics =
+
+    await getDashboardMetrics();
+
+
+
+
+  emitToRole(
+
+    "admin",
+
+    EVENTS.DASHBOARD_UPDATED,
+
+    metrics
+
+  );
+
+
 
 
   console.log(
-    "🔥 student_metrics_updated emitted"
+    "🔥 dashboard_updated emitted"
   );
+
+};
+
+
+export const emitAttendanceUpdated =
+(studentId, attendance) => {
+
+  global.io.emit(
+
+    "attendance:updated",
+
+    {
+
+      studentId,
+
+      attendance,
+
+    }
+
+  );
+
 };

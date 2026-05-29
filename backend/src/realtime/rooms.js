@@ -21,51 +21,25 @@ async (
 
 
 
-
-
   // 👨‍👩‍👧 PARENTS
   if (user.role === "parent") {
 
-    // 🟣 parent private room
     await socket.join(
       `parent:${user.id}`
     );
 
-
-
-    // 🚀 FUTURE:
-    // hijos reales desde DB
-    //
-    // for (const child of children) {
-    //   await socket.join(
-    //     `student:${child.id}`
-    //   );
-    // }
   }
-
-
 
 
 
   // 👨‍🏫 TEACHERS
   if (user.role === "teacher") {
 
-    // 🟣 teacher private room
     await socket.join(
       `teacher:${user.id}`
     );
 
-
-
-    // 🚀 FUTURE:
-    // classrooms reales
-    //
-    // await socket.join(
-    //   `classroom:${groupId}`
-    // );
   }
-
-
 
 
 
@@ -75,14 +49,31 @@ async (
     await socket.join(
       "admins"
     );
+
   }
 
 
+
+  /*
+  |--------------------------------------------------------------------------
+  | 🚀 ENTITY REALTIME ROOMS
+  |--------------------------------------------------------------------------
+  */
+
+  if (user.studentId) {
+
+    await socket.join(
+      `student:${user.studentId}`
+    );
+
+  }
 
 
 
   console.log(
 
     `📦 Rooms assigned → ${user.role}:${user.id}`
+
   );
+
 };

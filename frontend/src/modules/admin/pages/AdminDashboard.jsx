@@ -1,195 +1,68 @@
 import {
-  useMemo,
-} from "react";
+  useGetDashboardQuery,
+} from "../../../features/dashboard/dashboardApi";
 
-import {
-  useGetStudentsQuery,
-} from "../../../features/students/studentsApi";
+import DashboardGrid
+from "../../../features/dashboard/components/DashboardGrid";
 
-import {
-  useGetTeachersQuery,
-} from "../../../features/teachers/api/teachersApi";
+import DashboardCard
+from "../../../features/dashboard/components/DashboardCard";
 
-import {
-  useGetAssignmentsQuery,
-} from "../../../features/assignments/api/assignmentsApi";
+import AttendanceChart
+from "../../../features/dashboard/charts/AttendanceChart";
 
-import {
-  useGetGradesQuery,
-} from "../../../features/grades/api/gradesApi";
+import PaymentsChart
+from "../../../features/dashboard/charts/PaymentsChart";
 
+import IncidentsChart
+from "../../../features/dashboard/charts/IncidentsChart";
+
+import RecentActivityFeed
+from "../../../features/activity/components/RecentActivityFeed";
+
+import RiskStudentsCard
+from "../../../features/dashboard/components/RiskStudentsCard";
+
+import AttendanceOverviewCard
+from "../../../features/dashboard/components/AttendanceOverviewCard";
+
+import QuickActionsPanel
+from "../../../features/dashboard/components/QuickActionsPanel";
+
+import SkeletonDashboard
+from "../../../components/feedback/SkeletonDashboard";
+
+import AttendanceStatsGrid
+from "../../../features/dashboard/components/AttendanceStatsGrid";
+
+import AttendanceRateCard
+from "../../../features/dashboard/components/AttendanceRateCard";
+
+import AttendanceHeatmap
+from "../../../features/dashboard/components/AttendanceHeatmap";
 
 
 export default function AdminDashboard() {
 
-  // 🔥 STUDENTS
   const {
-    data: studentsResponse,
-    isLoading: studentsLoading,
-  } = useGetStudentsQuery();
 
+    data,
 
+    isLoading,
 
+  } = useGetDashboardQuery();
 
-  // 🔥 TEACHERS
-  const {
-    data: teachersResponse,
-    isLoading: teachersLoading,
-  } = useGetTeachersQuery();
 
 
 
-
-  // 🔥 ASSIGNMENTS
-  const {
-    data: assignmentsResponse,
-    isLoading: assignmentsLoading,
-  } = useGetAssignmentsQuery();
-
-
-
-
-  // 🔥 GRADES
-  const {
-    data: gradesResponse,
-    isLoading: gradesLoading,
-  } = useGetGradesQuery();
-
-
-
-
-  // 🔥 SAFE DATA
-  const students =
-    studentsResponse?.data || [];
-
-  const teachers =
-    teachersResponse?.data || [];
-
-  const assignments =
-    assignmentsResponse?.data || [];
-
-  const grades =
-    gradesResponse?.data || [];
-
-
-
-
-  // 🔥 LOADING
-  const isLoading =
-    studentsLoading ||
-    teachersLoading ||
-    assignmentsLoading ||
-    gradesLoading;
-
-
-
-
-  // 🔥 KPI ENGINE
-  const metrics =
-    useMemo(() => {
-
-      const totalStudents =
-        students.length;
-
-      const totalTeachers =
-        teachers.length;
-
-      const totalAssignments =
-        assignments.length;
-
-      const totalGrades =
-        grades.length;
-
-
-
-
-      // 🔥 GROUP AVERAGE
-      const groupAverage =
-        totalGrades > 0
-
-          ? (
-              grades.reduce(
-                (acc, grade) =>
-                  acc + Number(grade.grade || 0),
-                0
-              ) / totalGrades
-            ).toFixed(1)
-
-          : "0.0";
-
-
-
-
-
-      // 🔥 RISK STUDENTS
-      const riskStudents =
-        students.filter((student) => {
-
-          const studentGrades =
-            grades.filter(
-              (g) =>
-                String(g.student_id) ===
-                String(student.id)
-            );
-
-          if (
-            studentGrades.length === 0
-          ) {
-            return true;
-          }
-
-          const average =
-            studentGrades.reduce(
-              (acc, g) =>
-                acc + Number(g.grade || 0),
-              0
-            ) / studentGrades.length;
-
-          return average < 7;
-
-        }).length;
-
-
-
-
-
-      return {
-
-        totalStudents,
-
-        totalTeachers,
-
-        totalAssignments,
-
-        totalGrades,
-
-        groupAverage,
-
-        riskStudents,
-
-      };
-
-    }, [
-      students,
-      teachers,
-      assignments,
-      grades,
-    ]);
-
-
-
-
-
-  // 🔥 LOADING UI
   if (isLoading) {
 
     return (
 
-      <div className="
-        p-10
-        text-white
-      ">
-        Loading dashboard...
+      <div className="p-6">
+
+        <SkeletonDashboard />
+
       </div>
 
     );
@@ -199,16 +72,20 @@ export default function AdminDashboard() {
 
 
 
+  const metrics =
+    data?.data;
+
+
+
 
 
   return (
 
     <div className="
-      p-6
-      space-y-6
+      space-y-8
     ">
 
-      {/* 🔥 HEADER */}
+      {/* HEADER */}
       <div>
 
         <h1 className="
@@ -216,14 +93,22 @@ export default function AdminDashboard() {
           font-black
           text-white
         ">
-          🧠 Admin Dashboard
+
+          🚀 Admin Dashboard
+
         </h1>
 
+
+
+
+
         <p className="
-          text-gray-400
           mt-2
+          text-gray-400
         ">
-          Enterprise Academic Operations Center
+
+          Realtime school analytics
+
         </p>
 
       </div>
@@ -232,72 +117,97 @@ export default function AdminDashboard() {
 
 
 
+      {/* KPI GRID */}
+      <DashboardGrid>
 
-      {/* 🔥 KPI GRID */}
-      <div className="
-        grid
-        grid-cols-1
-        md:grid-cols-2
-        xl:grid-cols-3
-        gap-5
-      ">
-
-        <KpiCard
+        <DashboardCard
           title="Students"
-          value={metrics.totalStudents}
-          icon="🎓"
+          value={metrics.students}
+          icon="👨‍🎓"
+          subtitle="Registered students"
+          trend={12}
         />
 
 
 
-        <KpiCard
-          title="Teachers"
-          value={metrics.totalTeachers}
-          icon="👨‍🏫"
+
+
+        <DashboardCard
+          title="Pending Payments"
+          value={metrics.pendingPayments}
+          icon="💰"
+          subtitle="Awaiting payment"
+          trend={-3}
         />
 
 
 
-        <KpiCard
-          title="Assignments"
-          value={metrics.totalAssignments}
-          icon="📚"
-        />
 
 
-
-        <KpiCard
-          title="Grades"
-          value={metrics.totalGrades}
-          icon="📝"
-        />
-
-
-
-        <KpiCard
-          title="Group Average"
-          value={metrics.groupAverage}
-          icon="📈"
-        />
-
-
-
-        <KpiCard
-          title="At Risk"
-          value={metrics.riskStudents}
+        <DashboardCard
+          title="Incidents"
+          value={metrics.incidents}
           icon="🚨"
-          danger
+          subtitle="Recent incidents"
+          trend={8}
         />
 
-      </div>
+
+
+
+
+        <DashboardCard
+          title="Attendance"
+          value={`${metrics.attendance}%`}
+          icon="📈"
+          subtitle="Attendance rate"
+          trend={5}
+        />
+
+      </DashboardGrid>
 
 
 
 
 
+      {/* QUICK ACTIONS */}
+      <QuickActionsPanel />
 
 
-      {/* 🔥 QUICK INSIGHTS */}
+
+
+
+      {/* ATTENDANCE */}
+      <AttendanceStatsGrid
+        stats={
+          metrics.attendanceStats
+        }
+      />
+
+
+
+
+
+      <AttendanceRateCard
+        stats={
+          metrics.attendanceStats
+        }
+      />
+
+
+
+
+      <AttendanceHeatmap
+        data={
+          metrics.attendanceHeatmap
+        }
+      />
+
+
+
+
+
+      {/* CHARTS */}
       <div className="
         grid
         grid-cols-1
@@ -305,265 +215,131 @@ export default function AdminDashboard() {
         gap-6
       ">
 
-        {/* 🔥 RECENT STUDENTS */}
-        <div className="
-          bg-gray-900
-          border
-          border-gray-800
-          rounded-3xl
-          p-6
-        ">
+        <AttendanceChart
+          data={[
 
-          <div className="
-            flex
-            items-center
-            justify-between
-            mb-6
-          ">
+            {
+              name: "Mon",
+              attendance: 90,
+            },
 
-            <h2 className="
-              text-2xl
-              font-bold
-              text-white
-            ">
-              🎓 Recent Students
-            </h2>
+            {
+              name: "Tue",
+              attendance: 94,
+            },
 
-          </div>
+            {
+              name: "Wed",
+              attendance: 88,
+            },
 
+            {
+              name: "Thu",
+              attendance: 97,
+            },
 
+            {
+              name: "Fri",
+              attendance: 93,
+            },
 
+          ]}
+        />
 
 
-          <div className="
-            space-y-3
-          ">
 
-            {students
-              .slice(0, 5)
-              .map((student) => (
 
-                <div
-                  key={student.id}
-                  className="
-                    bg-gray-800
-                    rounded-2xl
-                    p-4
-                    flex
-                    items-center
-                    justify-between
-                  "
-                >
 
-                  <div>
+        <RecentActivityFeed
+          activities={
+            metrics.recentActivity
+          }
+        />
 
-                    <h3 className="
-                      text-white
-                      font-semibold
-                    ">
-                      {student.name}
-                    </h3>
 
-                    <p className="
-                      text-gray-400
-                      text-sm
-                    ">
-                      ID: {student.id}
-                    </p>
 
-                  </div>
 
 
+        <RiskStudentsCard
+          students={
+            metrics.riskStudents
+          }
+        />
 
 
 
-                  <div className="
-                    text-sm
-                    text-blue-400
-                  ">
-                    Active
-                  </div>
 
-                </div>
 
-              ))}
+        <AttendanceOverviewCard
+          overview={
+            metrics.attendanceOverview
+          }
+        />
 
-          </div>
 
-        </div>
 
 
 
+        <PaymentsChart
+          data={[
 
+            {
+              name: "Jan",
+              payments: 14,
+            },
 
+            {
+              name: "Feb",
+              payments: 22,
+            },
 
+            {
+              name: "Mar",
+              payments: 18,
+            },
 
+            {
+              name: "Apr",
+              payments: 30,
+            },
 
-        {/* 🔥 RECENT ASSIGNMENTS */}
-        <div className="
-          bg-gray-900
-          border
-          border-gray-800
-          rounded-3xl
-          p-6
-        ">
-
-          <div className="
-            flex
-            items-center
-            justify-between
-            mb-6
-          ">
-
-            <h2 className="
-              text-2xl
-              font-bold
-              text-white
-            ">
-              📚 Recent Assignments
-            </h2>
-
-          </div>
-
-
-
-
-
-
-          <div className="
-            space-y-3
-          ">
-
-            {assignments
-              .slice(0, 5)
-              .map((assignment) => (
-
-                <div
-                  key={assignment.id}
-                  className="
-                    bg-gray-800
-                    rounded-2xl
-                    p-4
-                    flex
-                    items-center
-                    justify-between
-                  "
-                >
-
-                  <div>
-
-                    <h3 className="
-                      text-white
-                      font-semibold
-                    ">
-                      {assignment.title}
-                    </h3>
-
-                    <p className="
-                      text-gray-400
-                      text-sm
-                    ">
-                      Due:
-                      {" "}
-                      {assignment.due_date || "N/A"}
-                    </p>
-
-                  </div>
-
-
-
-
-
-
-                  <div className="
-                    text-sm
-                    text-purple-400
-                  ">
-                    Published
-                  </div>
-
-                </div>
-
-              ))}
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  );
-
-}
-
-
-
-
-
-
-function KpiCard({
-
-  title,
-
-  value,
-
-  icon,
-
-  danger,
-
-}) {
-
-  return (
-
-    <div className={`
-      bg-gray-900
-      border
-      ${
-        danger
-          ? "border-red-500/30"
-          : "border-gray-800"
-      }
-      rounded-3xl
-      p-6
-      shadow-xl
-    `}>
-
-      <div className="
-        flex
-        items-center
-        justify-between
-      ">
-
-        <div>
-
-          <p className="
-            text-gray-400
-            text-sm
-          ">
-            {title}
-          </p>
-
-          <h2 className="
-            text-4xl
-            font-black
-            text-white
-            mt-2
-          ">
-            {value}
-          </h2>
-
-        </div>
+          ]}
+        />
 
 
 
 
 
         <div className="
-          text-4xl
+          xl:col-span-2
         ">
-          {icon}
+
+          <IncidentsChart
+            data={[
+
+              {
+                name: "Week 1",
+                incidents: 2,
+              },
+
+              {
+                name: "Week 2",
+                incidents: 5,
+              },
+
+              {
+                name: "Week 3",
+                incidents: 3,
+              },
+
+              {
+                name: "Week 4",
+                incidents: 7,
+              },
+
+            ]}
+          />
+
         </div>
 
       </div>

@@ -55,7 +55,8 @@ export const apiSlice =
       "Payments",
       "Assignments",
       "Dashboard",
-      "Notifications"
+      "Notifications",
+      "Activity"
 
     ],
 

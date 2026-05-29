@@ -1,0 +1,26 @@
+import express
+from "express";
+
+import {
+  verifyToken
+} from "../../middleware/authJWT.js";
+
+import {
+  searchController
+} from "./search.controller.js";
+
+const router =
+  express.Router();
+
+router.get(
+
+  "/",
+
+  verifyToken,
+
+  searchController
+
+);
+
+export default
+router;

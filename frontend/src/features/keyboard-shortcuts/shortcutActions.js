@@ -1,0 +1,21 @@
+export const SHORTCUTS = {
+
+  OPEN_COMMAND:
+    "OPEN_COMMAND",
+
+  OPEN_SEARCH:
+    "OPEN_SEARCH",
+
+  GO_STUDENTS:
+    "GO_STUDENTS",
+
+  GO_DASHBOARD:
+    "GO_DASHBOARD",
+
+  GO_TEACHERS:
+    "GO_TEACHERS",
+
+  CLOSE_OVERLAYS:
+    "CLOSE_OVERLAYS",
+
+};

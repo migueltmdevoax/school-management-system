@@ -1,5 +1,6 @@
-import { startRealtimeManager }
-from "./realtimeManager";
+import {
+  startRealtimeManager
+} from "./realtimeManager";
 
 import {
   studentsRealtimeListeners,
@@ -9,7 +10,13 @@ import {
   notificationsRealtimeListeners,
 } from "../features/notifications/notificationsRealtime";
 
+import {
+  activityRealtimeListeners,
+} from "../features/activity/activityRealtime";
 
+import {
+  dashboardRealtimeListeners,
+} from "../features/dashboard/dashboardRealtime";
 
 export function registerRealtime(
   store
@@ -25,5 +32,14 @@ export function registerRealtime(
       store
     ),
 
+    ...activityRealtimeListeners(
+      store
+    ),
+
+    ...dashboardRealtimeListeners(
+      store
+    ),
+
   ]);
+
 }

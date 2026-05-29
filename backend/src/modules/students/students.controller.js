@@ -1,6 +1,9 @@
 import * as studentsService
 from "./students.service.js";
 
+import {
+  bulkDeleteStudents,
+} from "./students.bulk.service.js";
 
 
 
@@ -157,4 +160,52 @@ async (req, res) => {
         error.message,
     });
   }
+};
+
+export const bulkDelete =
+async (req, res) => {
+
+  try {
+
+    const {
+
+      studentIds,
+
+    } = req.body;
+
+
+
+
+    const deletedStudents =
+
+      await bulkDeleteStudents(
+        studentIds
+      );
+
+
+
+
+    return res.status(200).json({
+
+      success: true,
+
+      deletedStudents,
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+
+      success: false,
+
+      message:
+        "Bulk delete failed",
+
+    });
+
+  }
+
 };

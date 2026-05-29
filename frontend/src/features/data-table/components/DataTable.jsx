@@ -38,6 +38,12 @@ import {
   filterData,
 } from "../utils/filterData";
 
+import EmptyStudents
+from "../../empty-states/components/EmptyStudents";
+
+import EmptySearch
+from "../../empty-states/components/EmptySearch";
+
 
 
 export default function DataTable({
@@ -101,6 +107,10 @@ export default function DataTable({
 
     ]);
 
+    const hasSearch =
+
+    search.trim().length > 0;
+
 
 
 
@@ -152,7 +162,24 @@ export default function DataTable({
     return <TableLoading />;
   }
 
+if (!loading && data.length === 0) {
 
+  return <EmptyStudents />;
+
+}
+
+
+
+
+
+if (
+  !loading &&
+  filteredData.length === 0
+) {
+
+  return <EmptySearch />;
+
+}
 
 
 

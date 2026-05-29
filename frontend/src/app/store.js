@@ -40,6 +40,23 @@ from "../features/loading/loadingSlice";
 import modalReducer
 from "../features/modal/modalSlice";
 
+import slideOverReducer from "../features/slide-over/slideOverSlice";
+
+import commandPaletteReducer
+from "../features/command-palette/commandPaletteSlice";
+
+import bulkSelectionReducer
+from "../features/bulk-actions/bulkSelectionSlice";
+
+import searchReducer
+from "../features/search/searchSlice";
+
+import globalSearchReducer
+from "../features/global-search/globalSearchSlice";
+
+import notificationsCenterReducer
+from "../features/notifications-center/notificationsCenterSlice";
+
 
 
 // 🟣 STORE
@@ -74,6 +91,24 @@ export const store =
 
       modal:
       modalReducer,
+
+      slideOver: 
+      slideOverReducer,
+
+      commandPalette:
+      commandPaletteReducer,
+
+      bulkSelection:
+      bulkSelectionReducer,
+
+      search:
+      searchReducer,
+
+      globalSearch:
+      globalSearchReducer,
+
+      notificationsCenter:
+      notificationsCenterReducer,
     },
 
 

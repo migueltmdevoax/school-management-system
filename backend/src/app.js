@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 
 // 🔥 ROUTES
+
 import authRoutes
   from "./modules/auth/auth.routes.js";
 
@@ -30,13 +31,55 @@ import incidentsRoutes
   from "./modules/incidents/incidents.routes.js";
 
 import groupsRoutes
-from "./modules/groups/groups.routes.js";
+  from "./modules/groups/groups.routes.js";
 
-import meRoutes from "./routes/me.routes.js";
+import meRoutes
+  from "./routes/me.routes.js";
 
 import notificationsRoutes
-from "./modules/notifications/notifications.routes.js";
+  from "./modules/notifications/notifications.routes.js";
 
+import activityRoutes
+  from "./modules/activity/activity.routes.js";
+
+import searchRoutes
+from "./modules/search/search.routes.js";
+
+import dashboardRoutes
+from "./modules/dashboard/dashboard.routes.js";
+
+import teacherAttendanceRoutes
+from "./modules/teacher-attendance/teacherAttendance.routes.js";
+
+import attendanceRoutes
+from "./modules/attendance/attendance.routes.js";
+
+import parentPortalRoutes
+from "./modules/parent-portal/parentPortal.routes.js";
+
+import parentNotificationsRoutes
+from "./modules/parent-notifications/parentNotifications.routes.js";
+
+import parentPaymentsRoutes
+from "./modules/parent-payments/parentPayments.routes.js";
+
+import parentAttendanceRoutes
+from "./modules/parent-attendance/parentAttendance.routes.js";
+
+import parentIncidentsRoutes
+from "./modules/parent-incidents/parentIncidents.routes.js";
+
+import parentGradesRoutes
+from "./modules/parent-grades/parentGrades.routes.js";
+
+import parentAssignmentsRoutes
+from "./modules/parent-assignments/parentAssignments.routes.js";
+
+import teacherCalendarRoutes
+from "./modules/teacher-calendar/teacherCalendar.routes.js";
+
+import academicEventsRoutes
+from "./modules/academic-events/academicEvents.routes.js";
 
 const app = express();
 
@@ -110,15 +153,88 @@ app.use(
   groupsRoutes
 );
 
-app.use("/api/me", meRoutes);
+app.use(
+  "/api/me",
+  meRoutes
+);
 
 app.use(
   "/api/notifications",
   notificationsRoutes
 );
 
+app.use(
+  "/api/activity",
+  activityRoutes
+);
 
+app.use(
+  "/api/search",
+  searchRoutes
+);
 
+app.use(
+
+  "/api/dashboard",
+
+  dashboardRoutes
+
+);
+
+app.use(
+  "/api/teacher-attendance",
+  teacherAttendanceRoutes
+);
+
+app.use(
+  "/api/attendance",
+  attendanceRoutes
+);
+
+app.use(
+  "/api/parent-portal",
+  parentPortalRoutes
+);
+
+app.use(
+  "/api/parent-notifications",
+  parentNotificationsRoutes
+);
+
+app.use(
+  "/api/parent-payments",
+  parentPaymentsRoutes
+);
+
+app.use(
+  "/api/parent-attendance",
+  parentAttendanceRoutes
+);
+
+app.use(
+  "/api/parent-incidents",
+  parentIncidentsRoutes
+);
+
+app.use(
+  "/api/parent-grades",
+  parentGradesRoutes
+);
+
+app.use(
+  "/api/parent-assignments",
+  parentAssignmentsRoutes
+);
+
+app.use(
+  "/api/teacher-calendar",
+  teacherCalendarRoutes
+);
+
+app.use(
+  "/api/academic-events",
+  academicEventsRoutes
+);
 
 // 🟣 404 HANDLER
 

@@ -5,9 +5,14 @@ import {
   getStudents,
   createStudent,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  bulkDelete,
 
 } from "./students.controller.js";
+
+import {
+  getStudentProfile
+} from "./students.profile.controller.js";
 
 import {
   verifyToken
@@ -43,6 +48,23 @@ router.get(
 );
 
 
+// 🔥 GET STUDENT PROFILE
+router.get(
+
+  "/:studentId/profile",
+
+  verifyToken,
+
+  authorizeRoles(
+    "admin",
+    "teacher",
+    "parent"
+  ),
+
+  getStudentProfile
+);
+
+
 // 🔥 CREATE STUDENT
 router.post(
 
@@ -72,6 +94,21 @@ router.put(
 
   updateStudent
 );
+
+router.post(
+
+  "/bulk-delete",
+
+  verifyToken,
+
+  authorizeRoles(
+    "admin"
+  ),
+
+  bulkDelete
+
+);
+
 
 
 // 🔥 DELETE STUDENT

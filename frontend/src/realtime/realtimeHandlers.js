@@ -1,6 +1,9 @@
 import { studentsApi }
 from "../features/students/studentsApi";
 
+import {
+  activityApi
+} from "../features/activity/activityApi";
 
 export const realtimeHandlers = {
 
@@ -31,12 +34,16 @@ export const realtimeHandlers = {
                 draft.unshift(
                   payload
                 );
-              }
-            }
-          )
-      );
-    },
 
+              }
+
+            }
+
+          )
+
+      );
+
+    },
 
 
 
@@ -70,14 +77,18 @@ export const realtimeHandlers = {
                   ...draft[index],
 
                   ...payload,
+
                 };
+
               }
+
             }
+
           )
+
       );
+
     },
-
-
 
 
 
@@ -101,11 +112,65 @@ export const realtimeHandlers = {
                 student =>
                   student.id !== payload.id
               );
+
             }
+
           )
+
       );
+
     },
 
 
+
+
+  // 🟣 ACTIVITY CREATED
+  activity_created:
+    (store, payload) => {
+
+      const entityType =
+        payload.entity_type;
+
+      const entityId =
+        payload.entity_id;
+
+      store.dispatch(
+
+        activityApi.util
+          .updateQueryData(
+
+            "getEntityActivity",
+
+            {
+              entityType,
+              entityId,
+            },
+
+            (draft) => {
+
+              if (!draft?.data)
+                return;
+
+              const exists =
+
+                draft.data.some(
+                  (item) =>
+                    item.id === payload.id
+                );
+
+              if (exists)
+                return;
+
+              draft.data.unshift(
+                payload
+              );
+
+            }
+
+          )
+
+      );
+
+    },
 
 };

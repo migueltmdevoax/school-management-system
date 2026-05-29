@@ -9,8 +9,6 @@ import {
   BrowserRouter,
 } from "react-router-dom";
 
-
-
 import "./index.css";
 
 
@@ -27,16 +25,9 @@ from "./providers/ReduxProvider";
 
 
 
-// 🟣 GLOBAL TOAST
-import GlobalToast
-from "./features/toast/components/GlobalToast";
-
-
-import GlobalLoader
-from "./features/loading/components/GlobalLoader";
-
-import GlobalModal
-from "./features/modal/components/GlobalModal";
+// 🟣 GLOBAL SYSTEMS
+import AppSystems
+from "./components/system/AppSystems";
 
 
 
@@ -63,12 +54,7 @@ createRoot(
 
         <App />
 
-        {/* 🔥 GLOBAL TOAST SYSTEM */}
-        <GlobalToast />
-
-        <GlobalLoader />
-
-        <GlobalModal />
+        <AppSystems />
 
       </BrowserRouter>
 
