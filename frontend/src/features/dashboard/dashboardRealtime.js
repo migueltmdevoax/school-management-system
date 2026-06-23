@@ -1,51 +1,17 @@
-import {
-  dashboardApi,
-} from "./dashboardApi";
+import { dashboardApi } from "./dashboardApi";
+import { EVENTS } from "../../constants/events";
 
-import {
-  EVENTS,
-} from "../../constants/events";
-
-export const
-dashboardRealtimeListeners =
-(store) => [
-
-  /*
-  |--------------------------------------------------------------------------
-  | 🟣 DASHBOARD UPDATED
-  |--------------------------------------------------------------------------
-  */
-
+export const dashboardRealtimeListeners = (store) => [
   {
-
-    event:
-      EVENTS.DASHBOARD_UPDATED,
-
-    handler:
-      (metrics) => {
-
-        store.dispatch(
-
-          dashboardApi.util
-            .updateQueryData(
-
-              "getDashboard",
-
-              undefined,
-
-              (draft) => {
-
-                draft.data =
-                  metrics;
-
-              }
-
-            )
-
-        );
-
-      },
-
+    event: EVENTS.DASHBOARD_UPDATED,
+    handler: (metrics) => {
+      store.dispatch(
+        dashboardApi.util.updateQueryData(
+          "getDashboard",
+          undefined,
+          (draft) => { draft.data = metrics; }
+        )
+      );
+    },
   },
-
 ];

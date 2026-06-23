@@ -1,36 +1,12 @@
-import {
-  apiSlice,
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const
-parentPaymentsApi =
-  apiSlice.injectEndpoints({
+export const parentPaymentsApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getParentPayments: builder.query({
+      query: () => "/parent-payments",
+      providesTags: ["Payments"],
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-
-
-        // 🟣 GET
-        getParentPayments:
-          builder.query({
-
-            query:
-              () =>
-                "/parent-payments",
-
-            providesTags: [
-              "PARENT_PAYMENTS",
-            ],
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useGetParentPaymentsQuery,
-
-} = parentPaymentsApi;
+export const { useGetParentPaymentsQuery } = parentPaymentsApi;

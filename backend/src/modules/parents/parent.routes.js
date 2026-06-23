@@ -1,34 +1,33 @@
-import express
-from "express";
-
-import * as controller
-from "./parents.controller.js";
-
+import express from "express";
+import { verifyToken } from "../../middleware/authJWT.js";
+import { authorizeRoles } from "../../middleware/authorizeRoles.js";
 import {
-  verifyToken
-} from "../../middleware/authJWT.js";
+  getDashboard,
+  getAllParents,
+  getParentById,
+} from "./parents.controller.js";
 
-import {
-  authorizeRoles
-} from "../../middleware/authorizeRoles.js";
+const router = express.Router();
 
-const router =
-  express.Router();
-
-
-
-// 🔥 PARENT DASHBOARD
 router.get(
-
   "/dashboard",
-
   verifyToken,
+  authorizeRoles("parent"),
+  getDashboard
+);
 
-  authorizeRoles(
-    "parent"
-  ),
+router.get(
+  "/",
+  verifyToken,
+  authorizeRoles("admin"),
+  getAllParents
+);
 
-  controller.getDashboard
+router.get(
+  "/:id",
+  verifyToken,
+  authorizeRoles("admin"),
+  getParentById
 );
 
 export default router;

@@ -1,4 +1,1 @@
-export const selectToasts =
-  (state) =>
-
-    state.toast.toasts;
+export const selectToasts = (state) => state.toast.toasts;

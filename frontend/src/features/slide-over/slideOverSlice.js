@@ -13,11 +13,10 @@ const slideOverSlice = createSlice({
   reducers: {
     openSlideOver: (state, action) => {
       state.isOpen = true;
-      state.type = action.payload.type;
+      state.type = action.payload.type || action.payload.component || null;
       state.entityId = action.payload.entityId || null;
       state.props = action.payload.props || null;
     },
-
     closeSlideOver: (state) => {
       state.isOpen = false;
       state.type = null;
@@ -27,9 +26,5 @@ const slideOverSlice = createSlice({
   },
 });
 
-export const {
-  openSlideOver,
-  closeSlideOver,
-} = slideOverSlice.actions;
-
+export const { openSlideOver, closeSlideOver } = slideOverSlice.actions;
 export default slideOverSlice.reducer;

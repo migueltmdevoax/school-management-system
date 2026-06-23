@@ -1,36 +1,12 @@
-import {
-  apiSlice,
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const
-parentIncidentsApi =
-  apiSlice.injectEndpoints({
+export const parentIncidentsApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getParentIncidents: builder.query({
+      query: () => "/parent-incidents",
+      providesTags: ["Incidents"],
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-
-
-        // 🟣 GET
-        getParentIncidents:
-          builder.query({
-
-            query:
-              () =>
-                "/parent-incidents",
-
-            providesTags: [
-              "PARENT_INCIDENTS",
-            ],
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useGetParentIncidentsQuery,
-
-} = parentIncidentsApi;
+export const { useGetParentIncidentsQuery } = parentIncidentsApi;

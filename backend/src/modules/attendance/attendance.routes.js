@@ -1,47 +1,23 @@
-import express
-from "express";
-
+import express        from "express";
+import { verifyToken }    from "../../middleware/authJWT.js";
+import { authorizeRoles } from "../../middleware/authorizeRoles.js";
 import {
-  verifyToken,
-} from "../../middleware/authJWT.js";
-
-import {
-
-  markAttendanceController,
-
-  getAttendanceByStudentController,
-
+  getAttendance,
+  markAttendance,
 } from "./attendance.controller.js";
 
-const router =
-  express.Router();
+const router = express.Router();
 
-
-
-
-// 🟣 CREATE
-router.post(
-
-  "/",
-
+router.get("/",
   verifyToken,
-
-  markAttendanceController
-
+  authorizeRoles("admin", "teacher"),
+  getAttendance
 );
 
-
-
-
-// 🟣 GET STUDENT ATTENDANCE
-router.get(
-
-  "/student/:studentId",
-
+router.post("/",
   verifyToken,
-
-  getAttendanceByStudentController
-
+  authorizeRoles("teacher"),
+  markAttendance
 );
 
 export default router;

@@ -1,36 +1,12 @@
-import {
-  apiSlice,
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const
-parentAttendanceApi =
-  apiSlice.injectEndpoints({
+export const parentAttendanceApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getParentAttendance: builder.query({
+      query: () => "/parent-attendance",
+      providesTags: ["Attendance"],
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-
-
-        // 🟣 GET
-        getParentAttendance:
-          builder.query({
-
-            query:
-              () =>
-                "/parent-attendance",
-
-            providesTags: [
-              "PARENT_ATTENDANCE",
-            ],
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useGetParentAttendanceQuery,
-
-} = parentAttendanceApi;
+export const { useGetParentAttendanceQuery } = parentAttendanceApi;

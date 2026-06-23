@@ -1,528 +1,115 @@
-import * as assignmentsService
-from "./assignments.service.js";
+import * as assignmentsService from "./assignments.service.js";
+import db from "../../config/db.js";
 
-
-
-// 🔥 GET ALL
-export const getAssignments =
-async (req, res) => {
-
-  try {
-
-    const assignments =
-      await assignmentsService
-        .getAllAssignments();
-
-    return res.status(200).json({
-
-      success: true,
-
-      message:
-        "Assignments fetched successfully",
-
-      data: assignments
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ getAssignments error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to fetch assignments"
-
-    });
-  }
+const resolveTeacherId = async (user) => {
+  if (user.teacher_id) return user.teacher_id;
+  const result = await db.query(
+    `SELECT id FROM teachers WHERE user_id = $1 LIMIT 1`, [user.id]
+  );
+  return result.rows[0]?.id || null;
 };
 
-// 🔥 GET MY ASSIGNMENTS
-export const getMyAssignments =
-async (req, res) => {
+const resolveParentId = async (user) => {
+  if (user.parent_id) return user.parent_id;
+  const result = await db.query(
+    `SELECT id FROM parents WHERE user_id = $1 LIMIT 1`, [user.id]
+  );
+  return result.rows[0]?.id || null;
+};
 
+export const getAssignments = async (req, res, next) => {
   try {
+    const assignments = await assignmentsService.getAllAssignments();
+    return res.status(200).json({ success: true, data: assignments });
+  } catch (error) { next(error); }
+};
 
-    const user = req.user;
-
+export const getMyAssignments = async (req, res, next) => {
+  try {
+    const { role } = req.user;
     let assignments;
 
-
-
-
-    // 🔥 ADMIN
-    if (user.role === "admin") {
-
-      assignments =
-        await assignmentsService.getAllAssignments();
+    if (role === "admin") {
+      assignments = await assignmentsService.getAllAssignments();
+    } else if (role === "teacher") {
+      const teacherId = await resolveTeacherId(req.user);
+      if (!teacherId) {
+        return res.status(404).json({ success: false, message: "Teacher profile not found" });
+      }
+      assignments = await assignmentsService.getAssignmentsByTeacher(teacherId);
+    } else if (role === "parent") {
+      const parentId = await resolveParentId(req.user);
+      if (!parentId) {
+        return res.status(404).json({ success: false, message: "Parent profile not found" });
+      }
+      assignments = await assignmentsService.getAssignmentsByParent(parentId);
+    } else {
+      return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
-
-
-
-    // 🔥 TEACHER
-    else if (user.role === "teacher") {
-
-      assignments =
-        await assignmentsService.getAssignmentsByTeacher(
-          user.teacher_id
-        );
-    }
-
-
-
-
-    // 🔥 PARENT
-    else if (user.role === "parent") {
-
-      assignments =
-        await assignmentsService.getAssignmentsByParent(
-          user.parent_id
-        );
-    }
-
-
-
-
-    return res.json({
-      success: true,
-      data: assignments
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
-
-  }
+    return res.json({ success: true, data: assignments });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 GET ONE
-export const getAssignmentById =
-async (req, res) => {
-
+export const getAssignmentById = async (req, res, next) => {
   try {
-
-    const { id } = req.params;
-
-    const assignment =
-      await assignmentsService
-        .getAssignmentById(id);
-
-    if (!assignment) {
-
-      return res.status(404).json({
-
-        success: false,
-
-        message:
-          "Assignment not found"
-
-      });
-    }
-
-    return res.status(200).json({
-
-      success: true,
-
-      data: assignment
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ getAssignmentById error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to fetch assignment"
-
-    });
-  }
+    const assignment = await assignmentsService.getAssignmentById(req.params.id);
+    if (!assignment) return res.status(404).json({ success: false, message: "Assignment not found" });
+    return res.status(200).json({ success: true, data: assignment });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 CREATE
-export const createAssignment =
-async (req, res) => {
-
+export const createAssignment = async (req, res, next) => {
   try {
-
-    const {
-
-      title,
-      description,
-      group_id,
-      teacher_id,
-      due_date,
-      attachment_url,
-      attachment_type,
-      max_score,
-      allow_comments,
-      published
-
-    } = req.body;
-
-
-
-
-    // 🔥 BASIC VALIDATION
-    if (
-      !title ||
-      !group_id ||
-      !teacher_id
-    ) {
-
-      return res.status(400).json({
-
-        success: false,
-
-        message:
-          "title, group_id and teacher_id are required"
-
-      });
+    const { title, group_id } = req.body;
+    if (!title || !group_id) {
+      return res.status(400).json({ success: false, message: "title and group_id are required" });
     }
 
+    const resolvedTeacherId = req.body.teacher_id || await resolveTeacherId(req.user);
+    if (!resolvedTeacherId) {
+      return res.status(400).json({ success: false, message: "teacher_id is required" });
+    }
 
-
-
-    const assignment =
-      await assignmentsService
-        .createAssignment({
-
-          title,
-          description,
-          group_id,
-          teacher_id,
-          due_date,
-          attachment_url,
-          attachment_type,
-          max_score,
-          allow_comments,
-          published
-
-        });
-
-
-
-
-    return res.status(201).json({
-
-      success: true,
-
-      message:
-        "Assignment created successfully",
-
-      data: assignment
-
+    const assignment = await assignmentsService.createAssignment({
+      ...req.body,
+      teacher_id: resolvedTeacherId,
     });
-
-  } catch (error) {
-
-    console.error(
-      "❌ createAssignment error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to create assignment"
-
-    });
-  }
+    return res.status(201).json({ success: true, data: assignment });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 UPDATE
-export const updateAssignment =
-async (req, res) => {
-
+export const updateAssignment = async (req, res, next) => {
   try {
-
-    const { id } = req.params;
-
-    const updatedAssignment =
-      await assignmentsService
-        .updateAssignment(
-          id,
-          req.body
-        );
-
-    if (!updatedAssignment) {
-
-      return res.status(404).json({
-
-        success: false,
-
-        message:
-          "Assignment not found"
-
-      });
-    }
-
-    return res.status(200).json({
-
-      success: true,
-
-      message:
-        "Assignment updated successfully",
-
-      data: updatedAssignment
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ updateAssignment error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to update assignment"
-
-    });
-  }
+    const updated = await assignmentsService.updateAssignment(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ success: false, message: "Assignment not found" });
+    return res.status(200).json({ success: true, data: updated });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 DELETE
-export const deleteAssignment =
-async (req, res) => {
-
+export const deleteAssignment = async (req, res, next) => {
   try {
-
-    const { id } = req.params;
-
-    const deletedAssignment =
-      await assignmentsService
-        .deleteAssignment(id);
-
-    if (!deletedAssignment) {
-
-      return res.status(404).json({
-
-        success: false,
-
-        message:
-          "Assignment not found"
-
-      });
-    }
-
-    return res.status(200).json({
-
-      success: true,
-
-      message:
-        "Assignment deleted successfully",
-
-      data: deletedAssignment
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ deleteAssignment error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to delete assignment"
-
-    });
-  }
+    const deleted = await assignmentsService.deleteAssignment(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, message: "Assignment not found" });
+    return res.status(200).json({ success: true, data: deleted });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 CREATE SUBMISSION
-export const createSubmission =
-async (req, res) => {
-
+export const createSubmission = async (req, res, next) => {
   try {
-
-    const {
-
-      assignment_id,
-      student_id,
-      submission_text,
-      attachment_url,
-      attachment_type
-
-    } = req.body;
-
-
-
-
-    if (
-      !assignment_id ||
-      !student_id
-    ) {
-
-      return res.status(400).json({
-
-        success: false,
-
-        message:
-          "assignment_id and student_id are required"
-
-      });
+    const { assignment_id, student_id } = req.body;
+    if (!assignment_id || !student_id) {
+      return res.status(400).json({ success: false, message: "assignment_id and student_id are required" });
     }
-
-
-
-
-    const submission =
-      await assignmentsService
-        .createSubmission({
-
-          assignment_id,
-          student_id,
-          submission_text,
-          attachment_url,
-          attachment_type
-
-        });
-
-
-
-
-    return res.status(201).json({
-
-      success: true,
-
-      message:
-        "Submission created successfully",
-
-      data: submission
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ createSubmission error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to create submission"
-
-    });
-  }
+    const submission = await assignmentsService.createSubmission(req.body);
+    return res.status(201).json({ success: true, data: submission });
+  } catch (error) { next(error); }
 };
 
-
-
-// 🔥 GRADE SUBMISSION
-export const gradeSubmission =
-async (req, res) => {
-
+export const gradeSubmission = async (req, res, next) => {
   try {
-
-    const { id } = req.params;
-
-    const {
-      grade,
-      feedback
-    } = req.body;
-
-
-
-
-    const gradedSubmission =
-      await assignmentsService
-        .gradeSubmission(
-
-          id,
-
-          {
-            grade,
-            feedback
-          }
-
-        );
-
-
-
-
-    if (!gradedSubmission) {
-
-      return res.status(404).json({
-
-        success: false,
-
-        message:
-          "Submission not found"
-
-      });
-    }
-
-
-
-
-    return res.status(200).json({
-
-      success: true,
-
-      message:
-        "Submission graded successfully",
-
-      data: gradedSubmission
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "❌ gradeSubmission error:",
-      error
-    );
-
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        "Failed to grade submission"
-
-    });
-  }
+    const graded = await assignmentsService.gradeSubmission(req.params.id, req.body);
+    if (!graded) return res.status(404).json({ success: false, message: "Submission not found" });
+    return res.status(200).json({ success: true, data: graded });
+  } catch (error) { next(error); }
 };

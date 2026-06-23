@@ -1,60 +1,30 @@
 import db from "../../config/db.js";
 
-export const
-getParentChildren =
-async (parentId) => {
+export const getParentChildren = async (userId) => {
+  const { rows: parentRows } = await db.query(
+    `SELECT id FROM parents WHERE user_id = $1`,
+    [userId]
+  );
 
-  const result =
-    await db.query(
+  if (!parentRows[0]) return [];
+  const parentId = parentRows[0].id;
 
-      `
-      SELECT
+  const { rows } = await db.query(
+    `SELECT s.id, s.first_name, s.last_name, s.email, s.group_id
+     FROM students s
+     JOIN parent_students ps ON ps.student_id = s.id
+     WHERE ps.parent_id = $1
+     ORDER BY s.last_name ASC`,
+    [parentId]
+  );
 
-        students.id,
-        students.first_name,
-        students.last_name,
-        students.email
-
-      FROM students
-
-      INNER JOIN parents
-      ON parents.student_id = students.id
-
-      WHERE parents.user_id = $1
-      `,
-
-      [parentId]
-
-    );
-
-
-
-  return result.rows;
-
+  return rows;
 };
 
-
-
-
-
-export const
-getParentDashboard =
-async (parentId) => {
-
-  const children =
-    await getParentChildren(
-      parentId
-    );
-
-
-
+export const getParentDashboard = async (userId) => {
+  const children = await getParentChildren(userId);
   return {
-
     children,
-
-    totalChildren:
-      children.length,
-
+    totalChildren: children.length,
   };
-
 };

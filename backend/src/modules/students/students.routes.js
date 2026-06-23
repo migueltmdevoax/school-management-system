@@ -1,127 +1,51 @@
 import express from "express";
-
 import {
-
-  getStudents,
-  createStudent,
-  updateStudent,
-  deleteStudent,
-  bulkDelete,
-
+  getStudents, createStudent, updateStudent,
+  deleteStudent, bulkDelete,
 } from "./students.controller.js";
+import { getStudentProfile }  from "./students.profile.controller.js";
+import { verifyToken }        from "../../middleware/authJWT.js";
+import { authorizeRoles }     from "../../middleware/authorizeRoles.js";
+import { validateUUID }       from "../../middleware/sanitize.middleware.js";
 
-import {
-  getStudentProfile
-} from "./students.profile.controller.js";
+const router = express.Router();
 
-import {
-  verifyToken
-} from "../../middleware/authJWT.js";
-
-import {
-  authorizeRoles
-} from "../../middleware/authorizeRoles.js";
-
-const router =
-  express.Router();
-
-
-
-/* =========================================
-   🎓 STUDENTS
-========================================= */
-
-// 🔥 GET STUDENTS
-router.get(
-
-  "/",
-
+router.get("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
+  authorizeRoles("admin","teacher","parent"),
   getStudents
 );
 
-
-// 🔥 GET STUDENT PROFILE
-router.get(
-
-  "/:studentId/profile",
-
+router.get("/:studentId/profile",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
+  authorizeRoles("admin","teacher","parent"),
+  validateUUID("studentId"),
   getStudentProfile
 );
 
-
-// 🔥 CREATE STUDENT
-router.post(
-
-  "/",
-
+router.post("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin"
-  ),
-
+  authorizeRoles("admin"),
   createStudent
 );
 
-
-// 🔥 UPDATE STUDENT
-router.put(
-
-  "/:id",
-
+router.put("/:id",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher"
-  ),
-
+  authorizeRoles("admin","teacher"),
+  validateUUID("id"),
   updateStudent
 );
 
-router.post(
-
-  "/bulk-delete",
-
+router.post("/bulk-delete",
   verifyToken,
-
-  authorizeRoles(
-    "admin"
-  ),
-
+  authorizeRoles("admin"),
   bulkDelete
-
 );
 
-
-
-// 🔥 DELETE STUDENT
-router.delete(
-
-  "/:id",
-
+router.delete("/:id",
   verifyToken,
-
-  authorizeRoles(
-    "admin"
-  ),
-
+  authorizeRoles("admin"),
+  validateUUID("id"),
   deleteStudent
 );
 

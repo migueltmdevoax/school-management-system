@@ -1,77 +1,16 @@
-import {
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-
-
+import { useState, useRef, useEffect } from "react";
 
 export function useActionMenu() {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
 
-  const [
-
-    open,
-    setOpen,
-
-  ] = useState(false);
-
-
-
-  const menuRef =
-    useRef(null);
-
-
-
-
-
-  // 🔥 CLOSE OUTSIDE
   useEffect(() => {
-
-    function handleClickOutside(
-      event
-    ) {
-
-      if (
-
-        menuRef.current &&
-
-        !menuRef.current.contains(
-          event.target
-        )
-
-      ) {
-
-        setOpen(false);
-      }
-    }
-
-
-
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-
-
-    return () => {
-
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
     };
-
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-
-
-
-
-  return {
-
-    open,
-    setOpen,
-    menuRef,
-  };
+  return { open, setOpen, menuRef };
 }

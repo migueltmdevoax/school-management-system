@@ -1,67 +1,38 @@
-import express
-from "express";
-
+import { Router }         from "express";
+import { verifyToken }    from "../../middleware/authJWT.js";
+import { authorizeRoles } from "../../middleware/authorizeRoles.js";
 import {
-
   getMyNotifications,
   markNotificationAsRead,
-  createNotification
-
+  markAllAsRead,
+  createNotification,
 } from "./notifications.controller.js";
 
-import {
+const router = Router();
 
-  validateCreateNotification
-
-} from "./notifications.validation.js";
-
-import {
-  verifyToken
-} from "../../middleware/authJWT.js";
-
-
-
-const router =
-  express.Router();
-
-
-
-// 🔥 GET MY NOTIFICATIONS
-router.get(
-
-  "/my-notifications",
-
+router.get("/my-notifications",
   verifyToken,
-
+  authorizeRoles("admin","teacher","parent"),
   getMyNotifications
 );
 
-
-
-// 🔥 MARK AS READ
-router.put(
-
-  "/:id/read",
-
+router.put("/:id/read",
   verifyToken,
-
+  authorizeRoles("admin","teacher","parent"),
   markNotificationAsRead
 );
 
-
-
-// 🔥 CREATE NOTIFICATION
-router.post(
-
-  "/",
-
+// 🔥 Nuevo endpoint — marca todas como leídas
+router.put("/read-all",
   verifyToken,
-
-  validateCreateNotification,
-
-  createNotification
+  authorizeRoles("admin","teacher","parent"),
+  markAllAsRead
 );
 
-
+router.post("/",
+  verifyToken,
+  authorizeRoles("admin"),
+  createNotification
+);
 
 export default router;

@@ -1,78 +1,20 @@
-import {
-  useEffect
-} from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { toggleCommandPalette } from "../features/command-palette/commandPaletteSlice";
 
-import {
-  useDispatch
-} from "react-redux";
-
-import {
-  toggleCommandPalette
-} from "../features/command-palette/commandPaletteSlice";
-
-const useCommandPalette =
-() => {
-
-  const dispatch =
-    useDispatch();
+const useCommandPalette = () => {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-
-    const handleKeyDown =
-      (event) => {
-
-        const isK =
-          event.key.toLowerCase() ===
-          "k";
-
-
-
-        const isCmd =
-          event.metaKey;
-
-
-
-        const isCtrl =
-          event.ctrlKey;
-
-
-
-        if (
-          isK &&
-          (isCmd || isCtrl)
-        ) {
-
-          event.preventDefault();
-
-          dispatch(
-            toggleCommandPalette()
-          );
-
-        }
-
-      };
-
-
-
-    window.addEventListener(
-      "keydown",
-      handleKeyDown
-    );
-
-
-
-    return () => {
-
-      window.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
-
+    const handleKeyDown = (e) => {
+      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        dispatch(toggleCommandPalette());
+      }
     };
-
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [dispatch]);
-
 };
 
-export default
-useCommandPalette;
+export default useCommandPalette;

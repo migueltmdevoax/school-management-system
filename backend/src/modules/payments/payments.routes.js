@@ -1,71 +1,41 @@
-import express
-from "express";
-
-import * as controller
-from "./payments.controller.js";
-
+import express        from "express";
+import { verifyToken }    from "../../middleware/authJWT.js";
+import { authorizeRoles } from "../../middleware/authorizeRoles.js";
+import { validateUUID }   from "../../middleware/sanitize.middleware.js";
 import {
-  verifyToken
-} from "../../middleware/authJWT.js";
+  getAllPayments,
+  createPayment,
+  markAsPaid,
+  deletePayment,
+} from "./payments.controller.js";
 
-import {
-  authorizeRoles
-} from "../../middleware/authorizeRoles.js";
+const router = express.Router();
 
-const router =
-  express.Router();
-
-
-
-/* =========================================
-   💳 PAYMENTS
-========================================= */
-
-// 🔥 CREATE PAYMENT
-router.post(
-
-  "/",
-
+// 🔥 Parent puede ver sus pagos
+router.get("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin"
-  ),
-
-  controller.createPayment
+  authorizeRoles("admin", "parent"),
+  getAllPayments
 );
 
-
-// 🔥 GET PAYMENTS
-router.get(
-
-  "/student/:id",
-
+router.post("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
-  controller.getPaymentsByStudent
+  authorizeRoles("admin"),
+  createPayment
 );
 
-
-// 🔥 MARK AS PAID
-router.patch(
-
-  "/:id/pay",
-
+router.patch("/:id/pay",
   verifyToken,
+  authorizeRoles("admin"),
+  validateUUID("id"),
+  markAsPaid
+);
 
-  authorizeRoles(
-    "admin",
-    "parent"
-  ),
-
-  controller.markAsPaid
+router.delete("/:id",
+  verifyToken,
+  authorizeRoles("admin"),
+  validateUUID("id"),
+  deletePayment
 );
 
 export default router;

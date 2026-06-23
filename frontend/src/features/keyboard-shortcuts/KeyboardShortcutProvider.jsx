@@ -1,14 +1,8 @@
-import useKeyboardShortcuts
-from "./useKeyboardShortcuts";
+import useKeyboardShortcuts from "./useKeyboardShortcuts";
 
-const KeyboardShortcutProvider =
-() => {
-
+const KeyboardShortcutProvider = () => {
   useKeyboardShortcuts();
-
   return null;
-
 };
 
-export default
-KeyboardShortcutProvider;
+export default KeyboardShortcutProvider;

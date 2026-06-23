@@ -1,31 +1,6 @@
-const BulkCheckbox = ({
-
-  checked,
-
-  onChange,
-
-}) => {
-
+export default function BulkCheckbox({ checked, onChange }) {
   return (
-
-    <input
-
-      type="checkbox"
-
-      checked={checked}
-
-      onChange={onChange}
-
-      className="
-        h-4
-        w-4
-        rounded
-      "
-    />
-
+    <input type="checkbox" checked={checked} onChange={onChange}
+      className="h-4 w-4 rounded accent-blue-500" />
   );
-
-};
-
-export default
-BulkCheckbox;
+}

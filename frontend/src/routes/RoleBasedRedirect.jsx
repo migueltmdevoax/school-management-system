@@ -1,65 +1,14 @@
-import { Navigate } from "react-router-dom";
-
-import { useSelector }
-from "react-redux";
+import { Navigate }    from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function RoleBasedRedirect() {
+  const { role, isAuthenticated } = useSelector((s) => s.auth);
 
-  const { role } =
-    useSelector(
-      (state) => state.auth
-    );
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
+  if (role === "admin")   return <Navigate to="/app/admin/dashboard"   replace />;
+  if (role === "teacher") return <Navigate to="/app/teacher/dashboard" replace />;
+  if (role === "parent")  return <Navigate to="/app/parent/dashboard"  replace />;
 
-
-
-  // 🔥 ADMIN
-  if (role === "admin") {
-
-    return (
-      <Navigate
-        to="/app/admin/dashboard"
-        replace
-      />
-    );
-  }
-
-
-
-
-  // 🔥 TEACHER
-  if (role === "teacher") {
-
-    return (
-      <Navigate
-        to="/app/teacher/dashboard"
-        replace
-      />
-    );
-  }
-
-
-
-
-  // 🔥 PARENT
-  if (role === "parent") {
-
-    return (
-      <Navigate
-        to="/app/parent/dashboard"
-        replace
-      />
-    );
-  }
-
-
-
-
-  // 🔥 FALLBACK
-  return (
-    <Navigate
-      to="/login"
-      replace
-    />
-  );
+  return <Navigate to="/login" replace />;
 }

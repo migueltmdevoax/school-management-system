@@ -1,77 +1,38 @@
 import express from "express";
-
 import {
-
   createGrade,
   getAllGrades,
-  getGradesByAssignmentStudent
-
+  getGradesByAssignmentStudent,
+  createGradeByAssignmentAndStudent,
 } from "./grades.controller.js";
+import { verifyToken }     from "../../middleware/authJWT.js";
+import { authorizeRoles }  from "../../middleware/authorizeRoles.js";
 
-import {
-  verifyToken
-} from "../../middleware/authJWT.js";
+const router = express.Router();
 
-import {
-  authorizeRoles
-} from "../../middleware/authorizeRoles.js";
-
-const router =
-  express.Router();
-
-
-
-/* =========================================
-   📊 GRADES
-========================================= */
-
-// 🔥 GET ALL
-router.get(
-
-  "/",
-
+router.get("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
+  authorizeRoles("admin","teacher","parent"),
   getAllGrades
 );
 
-
-// 🔥 GET BY ASSIGNMENT STUDENT
-router.get(
-
-  "/:assignment_student_id",
-
+router.get("/:assignment_student_id",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
+  authorizeRoles("admin","teacher","parent"),
   getGradesByAssignmentStudent
 );
 
-
-// 🔥 CREATE GRADE
-router.post(
-
-  "/",
-
+router.post("/",
   verifyToken,
-
-  authorizeRoles(
-    "teacher",
-    "admin"
-  ),
-
+  authorizeRoles("teacher","admin"),
   createGrade
+);
+
+// Nuevo endpoint — recibe assignment_id + student_id directamente
+router.post("/assignment-student",
+  verifyToken,
+  authorizeRoles("teacher","admin"),
+  createGradeByAssignmentAndStudent
 );
 
 export default router;

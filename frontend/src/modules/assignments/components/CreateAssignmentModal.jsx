@@ -95,11 +95,9 @@ export default function CreateAssignmentModal({
 
       setFormData((prev) => ({
         ...prev,
-        teacher_id:
-          user.id,
+        teacher_id: user.teacher_id,
       }));
     }
-
   }, [user]);
 
 

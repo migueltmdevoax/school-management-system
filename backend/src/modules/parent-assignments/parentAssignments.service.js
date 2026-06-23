@@ -1,44 +1,26 @@
 import db from "../../config/db.js";
 
-export const
-getParentAssignments =
-async (parentId) => {
+export const getParentAssignments = async (userId) => {
+  const { rows: parentRows } = await db.query(
+    `SELECT id FROM parents WHERE user_id = $1`,
+    [userId]
+  );
 
-  const result =
-    await db.query(
+  if (!parentRows[0]) return [];
+  const parentId = parentRows[0].id;
 
-      `
-      SELECT
+  const { rows } = await db.query(
+    `SELECT
+       a.id, a.title, a.description, a.due_date, a.status, a.max_score,
+       s.first_name, s.last_name
+     FROM assignments a
+     JOIN assignment_students ast ON ast.assignment_id = a.id
+     JOIN students s ON s.id = ast.student_id
+     JOIN parent_students ps ON ps.student_id = s.id
+     WHERE ps.parent_id = $1
+     ORDER BY a.due_date ASC`,
+    [parentId]
+  );
 
-        assignments.id,
-        assignments.title,
-        assignments.description,
-        assignments.due_date,
-
-        students.first_name,
-        students.last_name
-
-      FROM assignments
-
-      INNER JOIN students
-      ON students.id = assignments.student_id
-
-      INNER JOIN parents
-      ON parents.student_id = students.id
-
-      WHERE parents.user_id = $1
-
-      ORDER BY assignments.due_date ASC
-
-      LIMIT 30
-      `,
-
-      [parentId]
-
-    );
-
-
-
-  return result.rows;
-
+  return rows;
 };

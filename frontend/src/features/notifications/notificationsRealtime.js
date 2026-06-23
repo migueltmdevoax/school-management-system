@@ -1,57 +1,25 @@
-import {
-  notificationsApi,
-} from "./notificationsApi";
+import { apiSlice }          from "../../app/api/apiSlice";
+import { addToast }          from "../toast/toastSlice";
 
-
-
-export function notificationsRealtimeListeners(
-  store
-) {
-
+export function notificationsRealtimeListeners(store) {
   return [
-
-    // 🔥 REALTIME NOTIFICATION
     {
-      event:
-        "notification_created",
-
+      event: "notification_created",
       handler: (payload) => {
+        // 🔥 Invalida cache — fuerza refetch inmediato
+        store.dispatch(
+          apiSlice.util.invalidateTags(["Notifications"])
+        );
 
-  store.dispatch(
-
-    notificationsApi.util
-      .updateQueryData(
-
-        "getMyNotifications",
-
-        undefined,
-
-        (draft) => {
-
-          if (!draft) return;
-
-          const exists =
-
-            draft.some(
-              notification =>
-
-                notification.id ===
-                payload.id
-            );
-
-
-
-          if (!exists) {
-
-            draft.unshift(
-              payload
-            );
-          }
-        }
-      )
-  );
-},
-},
-
-];
+        // 🔥 Toast inmediato para feedback visual
+        store.dispatch(addToast({
+          type:     payload.type === "incident" ? "error" :
+                    payload.type === "payment"  ? "warning" : "info",
+          title:    payload.title   || "Nueva notificación",
+          message:  payload.message || "",
+          duration: 5000,
+        }));
+      },
+    },
+  ];
 }

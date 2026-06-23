@@ -1,66 +1,17 @@
-import {
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState = { open: false };
 
-  open: false,
+const globalSearchSlice = createSlice({
+  name: "globalSearch",
+  initialState,
+  reducers: {
+    openGlobalSearch:   (state) => { state.open = true; },
+    closeGlobalSearch:  (state) => { state.open = false; },
+    toggleGlobalSearch: (state) => { state.open = !state.open; },
+  },
+});
 
-};
-
-const globalSearchSlice =
-  createSlice({
-
-    name:
-      "globalSearch",
-
-    initialState,
-
-    reducers: {
-
-      openGlobalSearch:
-        (state) => {
-
-          state.open = true;
-
-        },
-
-
-
-
-
-      closeGlobalSearch:
-        (state) => {
-
-          state.open = false;
-
-        },
-
-
-
-
-
-      toggleGlobalSearch:
-        (state) => {
-
-          state.open =
-            !state.open;
-
-        },
-
-    },
-
-  });
-
-export const {
-
-  openGlobalSearch,
-
-  closeGlobalSearch,
-
-  toggleGlobalSearch,
-
-} = globalSearchSlice.actions;
-
-export default
-globalSearchSlice.reducer;
+export const { openGlobalSearch, closeGlobalSearch, toggleGlobalSearch } =
+  globalSearchSlice.actions;
+export default globalSearchSlice.reducer;

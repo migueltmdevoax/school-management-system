@@ -1,32 +1,12 @@
-import socket
-from "../../services/socket";
+import { getSocket } from "../../services/socket/socketClient";
+import { attendanceApi } from "./attendanceApi";
 
-import {
-  attendanceApi,
-} from "./attendanceApi";
+export const registerAttendanceRealtime = (store) => {
+  const socket = getSocket();
+  if (!socket) return;
 
-export const registerAttendanceRealtime =
-(store) => {
-
-  socket.on(
-
-    "attendance:updated",
-
-    (payload) => {
-
-      store.dispatch(
-
-        attendanceApi.util
-          .invalidateTags([
-
-            "ATTENDANCE",
-
-          ])
-
-      );
-
-    }
-
-  );
-
+  socket.off("attendance:updated");
+  socket.on("attendance:updated", () => {
+    store.dispatch(attendanceApi.util.invalidateTags(["Attendance"]));
+  });
 };

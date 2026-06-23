@@ -1,60 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { Navigate }    from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function RoleRoute({
-  children,
-  allowedRoles = [],
-}) {
+export default function RoleRoute({ children, allowedRoles = [] }) {
+  const { user, isAuthenticated } = useSelector((s) => s.auth);
 
-  const { user, isAuthenticated, loading } =
-    useSelector((state) => state.auth);
+  if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
 
+  if (!allowedRoles.includes(user.role)) return <Navigate to="/app" replace />;
 
-
-
-  // 🔥 ESPERAR AUTH
-  if (loading) {
-
-    return (
-      <div className="p-10 text-center">
-        Loading...
-      </div>
-    );
-  }
-
-
-
-
-  // 🔥 NO LOGIN
-  if (!isAuthenticated || !user) {
-
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
-  }
-
-
-
-
-  // 🔥 SIN PERMISOS
-  if (
-    !allowedRoles.includes(user.role)
-  ) {
-
-    return (
-      <Navigate
-        to="/unauthorized"
-        replace
-      />
-    );
-  }
-
-
-
-
-  // 🔥 TODO OK
   return children;
 }

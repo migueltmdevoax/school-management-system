@@ -1,29 +1,11 @@
-import {
-  apiSlice
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const searchApi =
-  apiSlice.injectEndpoints({
+export const searchApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    globalSearch: builder.query({
+      query: (query) => `/search?q=${query}`,
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-        globalSearch:
-          builder.query({
-
-            query:
-              (query) =>
-
-                `/search?q=${query}`,
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useGlobalSearchQuery,
-
-} = searchApi;
+export const { useGlobalSearchQuery } = searchApi;

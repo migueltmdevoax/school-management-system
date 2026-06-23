@@ -1,16 +1,4 @@
-const SlideOverBody = ({
-  children,
-}) => {
-  return (
-    <div
-      className="
-        flex-1
-        overflow-y-auto
-      "
-    >
-      {children}
-    </div>
-  );
-};
-
+const SlideOverBody = ({ children }) => (
+  <div className="flex-1 overflow-y-auto">{children}</div>
+);
 export default SlideOverBody;

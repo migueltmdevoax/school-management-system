@@ -1,40 +1,14 @@
-import {
-  Navigate,
-  Outlet,
-} from "react-router-dom";
-
-import {
-  useAppSelector,
-} from "../hooks/useAppSelector";
-
-
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector }                from "../hooks/useAppSelector";
 
 export default function ProtectedRoute() {
+  const { token, isAuthenticated } = useAppSelector((s) => s.auth);
+  const location = useLocation();
 
-  // 🔥 AUTH
-  const {
-    token,
-    user,
-  } = useAppSelector(
-    (state) => state.auth
-  );
-
-
-
-  // 🔥 NO SESSION
-  if (!token || !user) {
-
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
-
+  if (!token || !isAuthenticated) {
+    // Guarda la ruta a la que intentaba ir para redirigir después del login
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-
-
-  // 🔥 AUTHORIZED
   return <Outlet />;
 }

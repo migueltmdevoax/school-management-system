@@ -1,65 +1,16 @@
-import {
-  apiSlice,
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const attendanceApi =
-  apiSlice.injectEndpoints({
+export const attendanceApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getAttendance: builder.query({
+      query: (date) => date ? `/attendance?date=${date}` : "/attendance",
+      providesTags: ["Attendance"],
+    }),
+    markAttendance: builder.mutation({
+      query: (body) => ({ url: "/attendance", method: "POST", body }),
+      invalidatesTags: ["Attendance", "Dashboard"],
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-
-
-        // 🟣 MARK
-        markAttendance:
-          builder.mutation({
-
-            query:
-              (data) => ({
-
-                url:
-                  "/attendance",
-
-                method:
-                  "POST",
-
-                body:
-                  data,
-
-              }),
-
-            invalidatesTags: [
-              "ATTENDANCE",
-            ],
-
-          }),
-
-
-
-
-        // 🟣 GET STUDENT
-        getStudentAttendance:
-          builder.query({
-
-            query:
-              (studentId) =>
-
-                `/attendance/student/${studentId}`,
-
-            providesTags: [
-              "ATTENDANCE",
-            ],
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useMarkAttendanceMutation,
-
-  useGetStudentAttendanceQuery,
-
-} = attendanceApi;
+export const { useGetAttendanceQuery, useMarkAttendanceMutation } = attendanceApi;

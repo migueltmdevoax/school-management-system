@@ -1,48 +1,58 @@
-import * as service from "./payments.service.js";
-import { notifyParentsOfPayment } from "../notifications/notifications.service.js";
+import * as paymentsService from "./payments.service.js";
+import db from "../../config/db.js";
 
-export async function createPayment(req, res) {
+const resolveParentId = async (user) => {
+  if (user.parent_id) return user.parent_id;
+  const result = await db.query(
+    `SELECT id FROM parents WHERE user_id = $1 LIMIT 1`, [user.id]
+  );
+  return result.rows[0]?.id || null;
+};
+
+export const getAllPayments = async (req, res, next) => {
+  try {
+    const { role } = req.user;
+
+    // 🔥 Parent solo ve sus propios pagos
+    if (role === "parent") {
+      const parentId = await resolveParentId(req.user);
+      if (!parentId) {
+        return res.status(404).json({ success: false, message: "Parent not found" });
+      }
+      const data = await paymentsService.getPaymentsByParent(parentId);
+      return res.json({ success: true, data });
+    }
+
+    // Admin ve todos
+    const data = await paymentsService.getAllPayments();
+    return res.json({ success: true, data });
+  } catch (error) { next(error); }
+};
+
+export const createPayment = async (req, res, next) => {
   try {
     const { studentId, amount, dueDate } = req.body;
+    if (!studentId || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "studentId and amount are required",
+      });
+    }
+    const payment = await paymentsService.createPayment({ studentId, amount, dueDate });
+    return res.status(201).json({ success: true, data: payment });
+  } catch (error) { next(error); }
+};
 
-    const payment = await service.createPayment({
-      studentId,
-      amount,
-      dueDate
-    });
-
-    // 🔔 magia aquí
-    await notifyParentsOfPayment(studentId, payment.amount);
-
-    res.json(payment);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error creating payment" });
-  }
-}
-
-export async function getPaymentsByStudent(req, res) {
+export const markAsPaid = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const payment = await paymentsService.markAsPaid(req.params.id);
+    return res.json({ success: true, data: payment });
+  } catch (error) { next(error); }
+};
 
-    const payments = await service.getPaymentsByStudent(id);
-
-    res.json(payments);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error fetching payments" });
-  }
-}
-
-export async function markAsPaid(req, res) {
+export const deletePayment = async (req, res, next) => {
   try {
-    const { id } = req.params;
-
-    const payment = await service.markAsPaid(id);
-
-    res.json(payment);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error updating payment" });
-  }
-}
+    const payment = await paymentsService.deletePayment(req.params.id);
+    return res.json({ success: true, data: payment });
+  } catch (error) { next(error); }
+};

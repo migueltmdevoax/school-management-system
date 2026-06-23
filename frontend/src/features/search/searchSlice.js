@@ -1,63 +1,16 @@
-import {
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState = { isOpen: false, query: "" };
 
-  isOpen: false,
+const searchSlice = createSlice({
+  name: "search",
+  initialState,
+  reducers: {
+    openSearch:     (state) => { state.isOpen = true; },
+    closeSearch:    (state) => { state.isOpen = false; },
+    setSearchQuery: (state, action) => { state.query = action.payload; },
+  },
+});
 
-  query: "",
-
-};
-
-const searchSlice =
-  createSlice({
-
-    name: "search",
-
-    initialState,
-
-    reducers: {
-
-      openSearch:
-        (state) => {
-
-          state.isOpen = true;
-
-        },
-
-
-
-      closeSearch:
-        (state) => {
-
-          state.isOpen = false;
-
-        },
-
-
-
-      setSearchQuery:
-        (state, action) => {
-
-          state.query =
-            action.payload;
-
-        },
-
-    },
-
-  });
-
-export const {
-
-  openSearch,
-
-  closeSearch,
-
-  setSearchQuery,
-
-} = searchSlice.actions;
-
-export default
-searchSlice.reducer;
+export const { openSearch, closeSearch, setSearchQuery } = searchSlice.actions;
+export default searchSlice.reducer;

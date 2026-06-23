@@ -1,36 +1,12 @@
-import {
-  apiSlice,
-} from "../../app/api/apiSlice";
+import { apiSlice } from "../../app/api/apiSlice";
 
-export const
-parentAssignmentsApi =
-  apiSlice.injectEndpoints({
+export const parentAssignmentsApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getParentAssignments: builder.query({
+      query: () => "/parent-assignments",
+      providesTags: ["Assignments"],
+    }),
+  }),
+});
 
-    endpoints:
-      (builder) => ({
-
-
-
-        // 🟣 GET
-        getParentAssignments:
-          builder.query({
-
-            query:
-              () =>
-                "/parent-assignments",
-
-            providesTags: [
-              "PARENT_ASSIGNMENTS",
-            ],
-
-          }),
-
-      }),
-
-  });
-
-export const {
-
-  useGetParentAssignmentsQuery,
-
-} = parentAssignmentsApi;
+export const { useGetParentAssignmentsQuery } = parentAssignmentsApi;

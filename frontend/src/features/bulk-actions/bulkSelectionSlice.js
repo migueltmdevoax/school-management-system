@@ -1,83 +1,21 @@
-import {
-  createSlice
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState = { selectedIds: [] };
 
-  selectedIds: [],
-
-};
-
-const bulkSelectionSlice =
-  createSlice({
-
-    name:
-      "bulkSelection",
-
-    initialState,
-
-    reducers: {
-
-      toggleSelection:
-        (state, action) => {
-
-          const id =
-            action.payload;
-
-          const exists =
-            state.selectedIds
-              .includes(id);
-
-          if (exists) {
-
-            state.selectedIds =
-              state.selectedIds
-                .filter(
-                  (item) =>
-                    item !== id
-                );
-
-          } else {
-
-            state.selectedIds
-              .push(id);
-
-          }
-
-        },
-
-
-
-      clearSelection:
-        (state) => {
-
-          state.selectedIds = [];
-
-        },
-
-
-
-      selectAll:
-        (state, action) => {
-
-          state.selectedIds =
-            action.payload;
-
-        },
-
+const bulkSelectionSlice = createSlice({
+  name: "bulkSelection",
+  initialState,
+  reducers: {
+    toggleSelection: (state, action) => {
+      const id = action.payload;
+      const idx = state.selectedIds.indexOf(id);
+      if (idx !== -1) state.selectedIds.splice(idx, 1);
+      else state.selectedIds.push(id);
     },
+    clearSelection: (state) => { state.selectedIds = []; },
+    selectAll:      (state, action) => { state.selectedIds = action.payload; },
+  },
+});
 
-  });
-
-export const {
-
-  toggleSelection,
-
-  clearSelection,
-
-  selectAll,
-
-} = bulkSelectionSlice.actions;
-
-export default
-bulkSelectionSlice.reducer;
+export const { toggleSelection, clearSelection, selectAll } = bulkSelectionSlice.actions;
+export default bulkSelectionSlice.reducer;

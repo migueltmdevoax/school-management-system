@@ -1,213 +1,140 @@
 import db from "../../config/db.js";
+import { emitNotificationCreated } from "../../realtime/emitters.js";
+import { sendIncidentEmail, sendPaymentEmail } from "../../services/email.service.js";
 
-import {
-
-  emitNotificationCreated
-
-} from "../../realtime/emitters.js";
-
-
-
-// 🔥 CREATE NOTIFICATION
-export async function createNotification({
-
-  userId,
-  title,
-  message,
-  type = null,
-  relatedId = null
-
-}) {
-
+export async function createNotification({ userId, title, message, type = null, relatedId = null }) {
   const result = await db.query(
-    `
-    INSERT INTO notifications (
-
-      user_id,
-      title,
-      message,
-      type,
-      related_id
-
-    )
-
-    VALUES ($1, $2, $3, $4, $5)
-
-    RETURNING *
-    `,
-    [
-
-      userId,
-      title,
-      message,
-      type,
-      relatedId
-
-    ]
+    `INSERT INTO notifications (user_id, title, message, type, related_id)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [userId, title, message, type, relatedId]
   );
-
-
-
-  const notification =
-    result.rows[0];
-
-
-
-  // 🔥 REALTIME EMIT
-  emitNotificationCreated(
-
-    userId,
-
-    notification
-  );
-
-
-
+  const notification = result.rows[0];
+  emitNotificationCreated(userId, notification);
   return notification;
 }
 
-
-
-
-
-// 🔥 NOTIFY PARENTS OF PAYMENT
-export async function notifyParentsOfPayment(
-
-  studentId,
-  amount
-
-) {
-
-  const result = await db.query(
-    `
-    SELECT u.id as user_id
-
-    FROM parent_students ps
-
-    JOIN parents p
-      ON ps.parent_id = p.id
-
-    JOIN users u
-      ON p.user_id = u.id
-
-    WHERE ps.student_id = $1
-    `,
-    [studentId]
+async function notifyAllAdmins({ title, message, type }) {
+  const { rows: admins } = await db.query(
+    `SELECT id FROM users WHERE role = 'admin'`
   );
-
-
-
-  for (const row of result.rows) {
-
-    await createNotification({
-
-      userId: row.user_id,
-
-      title: "Pago pendiente",
-
-      message:
-        `Tienes un adeudo de $${amount}`,
-
-      type: "payment"
-    });
+  for (const admin of admins) {
+    await createNotification({ userId: admin.id, title, message, type });
   }
 }
 
-
-
-
-
-// 🔥 NOTIFY PARENTS OF INCIDENT
-export async function notifyParentsOfIncident(
-
-  studentId,
-  title
-
-) {
-
-  const result = await db.query(
-    `
-    SELECT u.id as user_id
-
-    FROM parent_students ps
-
-    JOIN parents p
-      ON ps.parent_id = p.id
-
-    JOIN users u
-      ON p.user_id = u.id
-
-    WHERE ps.student_id = $1
-    `,
+// 🔥 Helper independiente — siempre obtiene el nombre del estudiante sin importar si tiene parent
+async function getStudentName(studentId) {
+  const { rows } = await db.query(
+    `SELECT first_name, last_name FROM students WHERE id = $1`,
     [studentId]
   );
-
-
-
-  for (const row of result.rows) {
-
-    await createNotification({
-
-      userId: row.user_id,
-
-      title: "Nuevo incidente",
-
-      message:
-        `Se ha reportado: ${title}`,
-
-      type: "incident"
-    });
-  }
+  if (rows.length === 0) return "Unknown student";
+  return `${rows[0].first_name} ${rows[0].last_name}`;
 }
 
-
-
-
-
-// 🔥 GET USER NOTIFICATIONS
-export async function getUserNotifications(
-  userId
-) {
-
-  const result = await db.query(
-    `
-    SELECT *
-
-    FROM notifications
-
-    WHERE user_id = $1
-
-    ORDER BY created_at DESC
-    `,
+export async function getUserNotifications(userId) {
+  const { rows } = await db.query(
+    `SELECT * FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50`,
     [userId]
   );
-
-
-
-  return result.rows;
+  return rows;
 }
 
-
-
-
-
-// 🔥 MARK AS READ
 export async function markAsRead(id) {
-
-  const result = await db.query(
-    `
-    UPDATE notifications
-
-    SET is_read = true
-
-    WHERE id = $1
-
-    RETURNING *
-    `,
+  const { rows } = await db.query(
+    `UPDATE notifications SET is_read = true WHERE id = $1 RETURNING *`,
     [id]
   );
+  return rows[0];
+}
 
+export async function markAllAsRead(userId) {
+  await db.query(
+    `UPDATE notifications SET is_read = true WHERE user_id = $1 AND is_read = false`,
+    [userId]
+  );
+}
 
+export async function notifyParentsOfPayment(studentId, amount) {
+  // 🔥 Nombre del estudiante SIEMPRE se obtiene, sin depender de parent_students
+  const studentName = await getStudentName(studentId);
 
-  return result.rows[0];
+  const result = await db.query(
+    `SELECT
+       u.id AS user_id, u.email,
+       p.first_name, p.last_name,
+       pay.due_date
+     FROM parent_students ps
+     JOIN parents  p ON ps.parent_id  = p.id
+     JOIN users    u ON p.user_id     = u.id
+     LEFT JOIN payments pay ON pay.student_id = ps.student_id AND pay.status = 'PENDING'
+     WHERE ps.student_id = $1`,
+    [studentId]
+  );
+
+  for (const row of result.rows) {
+    await createNotification({
+      userId:  row.user_id,
+      title:   "💰 Pago pendiente",
+      message: `${studentName} tiene un adeudo de $${amount}`,
+      type:    "payment",
+    });
+
+    await sendPaymentEmail({
+      toEmail:     row.email,
+      parentName:  `${row.first_name || ""} ${row.last_name || ""}`.trim(),
+      studentName,
+      amount,
+      dueDate:     row.due_date,
+    });
+  }
+
+  // 🔥 Admin SIEMPRE recibe notificación, sin importar si hay parents o no
+  await notifyAllAdmins({
+    title:   "💰 Nuevo pago registrado",
+    message: `Se registró un pago de $${amount} para ${studentName}`,
+    type:    "payment",
+  });
+}
+
+export async function notifyParentsOfIncident(studentId, title, severity = "HIGH") {
+  // 🔥 Nombre del estudiante SIEMPRE se obtiene, sin depender de parent_students
+  const studentName = await getStudentName(studentId);
+
+  const result = await db.query(
+    `SELECT
+       u.id AS user_id, u.email,
+       p.first_name, p.last_name
+     FROM parent_students ps
+     JOIN parents  p ON ps.parent_id  = p.id
+     JOIN users    u ON p.user_id     = u.id
+     WHERE ps.student_id = $1`,
+    [studentId]
+  );
+
+  for (const row of result.rows) {
+    await createNotification({
+      userId:  row.user_id,
+      title:   "🚨 Incidente registrado",
+      message: `Se reportó un incidente de severidad ${severity} para ${studentName}: ${title}`,
+      type:    "incident",
+    });
+
+    if (["HIGH", "MEDIUM"].includes(severity)) {
+      await sendIncidentEmail({
+        toEmail:       row.email,
+        parentName:    `${row.first_name || ""} ${row.last_name || ""}`.trim(),
+        studentName,
+        incidentTitle: title,
+        severity,
+      });
+    }
+  }
+
+  // 🔥 Admin SIEMPRE recibe notificación de TODAS las severidades (LOW, MEDIUM, HIGH)
+  await notifyAllAdmins({
+    title:   `🚨 Incidente ${severity} registrado`,
+    message: `${studentName}: ${title}`,
+    type:    "incident",
+  });
 }

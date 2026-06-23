@@ -1,70 +1,18 @@
-import {
+import { ResponsiveContainer, LineChart, Line, XAxis, Tooltip } from "recharts";
+import ChartCard from "./ChartCard";
 
-  ResponsiveContainer,
-
-  LineChart,
-
-  Line,
-
-  XAxis,
-
-  Tooltip,
-
-} from "recharts";
-
-import ChartCard
-from "./ChartCard";
-
-export default function IncidentsChart({
-
-  data,
-
-}) {
-
+export default function IncidentsChart({ data }) {
   return (
-
-    <ChartCard
-      title="Incidents"
-    >
-
-      <div className="
-        h-72
-      ">
-
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-        >
-
-          <LineChart
-            data={data}
-          >
-
-            <XAxis
-              dataKey="name"
-            />
-
+    <ChartCard title="Incidents">
+      <div style={{ width: "100%", minHeight: 288 }}>
+        <ResponsiveContainer width="100%" height={288}>
+          <LineChart data={data}>
+            <XAxis dataKey="name" />
             <Tooltip />
-
-
-
-
-
-            <Line
-              type="monotone"
-              dataKey="incidents"
-              stroke="#ef4444"
-              strokeWidth={3}
-            />
-
+            <Line type="monotone" dataKey="incidents" stroke="#ef4444" strokeWidth={3} />
           </LineChart>
-
         </ResponsiveContainer>
-
       </div>
-
     </ChartCard>
-
   );
-
 }

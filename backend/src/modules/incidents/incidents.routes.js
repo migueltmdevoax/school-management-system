@@ -1,56 +1,30 @@
-import { Router }
-from "express";
-
-import * as controller
-from "./incidents.controller.js";
-
+import { Router }         from "express";
+import { verifyToken }    from "../../middleware/authJWT.js";
+import { authorizeRoles } from "../../middleware/authorizeRoles.js";
 import {
-  verifyToken
-} from "../../middleware/authJWT.js";
+  createIncident,
+  getAllIncidents,
+  deleteIncident,
+} from "./incidents.controller.js";
 
-import {
-  authorizeRoles
-} from "../../middleware/authorizeRoles.js";
+const router = Router();
 
-const router =
-  Router();
-
-
-
-/* =========================================
-   🚨 INCIDENTS
-========================================= */
-
-// 🔥 CREATE INCIDENT
-router.post(
-
-  "/",
-
+router.get("/",
   verifyToken,
-
-  authorizeRoles(
-    "admin",
-    "teacher"
-  ),
-
-  controller.createIncident
+  authorizeRoles("admin", "teacher"),
+  getAllIncidents
 );
 
-
-// 🔥 GET INCIDENTS BY STUDENT
-router.get(
-
-  "/:id",
-
+router.post("/",
   verifyToken,
+  authorizeRoles("admin", "teacher"),
+  createIncident
+);
 
-  authorizeRoles(
-    "admin",
-    "teacher",
-    "parent"
-  ),
-
-  controller.getIncidentsByStudent
+router.delete("/:id",
+  verifyToken,
+  authorizeRoles("admin"),
+  deleteIncident
 );
 
 export default router;
