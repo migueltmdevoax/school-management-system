@@ -15,13 +15,10 @@ const allowedOrigins =
 
 export const corsOptions = {
   origin: (origin, callback) => {
-    // Permite requests sin origin (mobile apps, Postman en dev)
+    // 🔥 Siempre permite requests sin origin — esto cubre mobile apps (APK),
+    // Postman, curl, y server-to-server, tanto en dev como en producción
     if (!origin) {
-      if (process.env.NODE_ENV === "production") {
-        callback(new Error("Not allowed by CORS"));
-      } else {
-        callback(null, true);
-      }
+      callback(null, true);
       return;
     }
 
