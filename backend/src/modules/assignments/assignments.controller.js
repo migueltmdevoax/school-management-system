@@ -2,6 +2,7 @@ import * as assignmentsService from "./assignments.service.js";
 import db from "../../config/db.js";
 import { emitToRole } from "../../realtime/emitters.js";
 import { EVENTS } from "../../realtime/events.js";
+import { notifyParentsOfAssignment } from "../notifications/notifications.service.js";
 
 const resolveTeacherId = async (user) => {
   if (user.teacher_id) return user.teacher_id;
@@ -77,6 +78,9 @@ export const createAssignment = async (req, res, next) => {
       ...req.body,
       teacher_id: resolvedTeacherId,
     });
+
+    await notifyParentsOfAssignment(assignment.group_id, assignment.title);
+
 
     // 🔥 FIX: emite el evento por socket para notificar a admin, teacher y parents
     emitToRole("admin",   EVENTS.ASSIGNMENT_CREATED || "assignment_created", assignment);

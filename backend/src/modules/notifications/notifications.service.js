@@ -138,3 +138,24 @@ export async function notifyParentsOfIncident(studentId, title, severity = "HIGH
     type:    "incident",
   });
 }
+
+export async function notifyParentsOfAssignment(groupId, title) {
+  const result = await db.query(
+    `SELECT DISTINCT u.id AS user_id, u.email, p.first_name, p.last_name
+     FROM students s
+     JOIN parent_students ps ON ps.student_id = s.id
+     JOIN parents p ON p.id = ps.parent_id
+     JOIN users u ON u.id = p.user_id
+     WHERE s.group_id = $1`,
+    [groupId]
+  );
+
+  for (const row of result.rows) {
+    await createNotification({
+      userId:  row.user_id,
+      title:   "📚 Nueva tarea asignada",
+      message: `Se publicó una nueva tarea: ${title}`,
+      type:    "assignment",
+    });
+  }
+}
