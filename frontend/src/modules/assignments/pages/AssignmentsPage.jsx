@@ -77,23 +77,29 @@ export default function AssignmentsPage() {
               </div>
 
               <div className="grid grid-cols-3 gap-4 mt-6">
-                <div className="bg-gray-800 rounded-2xl p-4">
-                  <p className="text-gray-500 text-sm">Max Score</p>
-                  <h3 className="text-white text-2xl font-bold">{assignment.max_score || 10}</h3>
-                </div>
-                <div className="bg-gray-800 rounded-2xl p-4">
-                  <p className="text-gray-500 text-sm">Due Date</p>
-                  <h3 className="text-white text-sm font-bold mt-1">
-                    {assignment.due_date || "No deadline"}
-                  </h3>
-                </div>
-                <div className="bg-gray-800 rounded-2xl p-4">
-                  <p className="text-gray-500 text-sm">Group</p>
-                  <h3 className="text-white text-sm font-bold mt-1">
-                    {assignment.group_name || "—"}
-                  </h3>
-                </div>
-              </div>
+  <div className="bg-gray-800 rounded-2xl p-4">
+    <p className="text-gray-500 text-sm">Weight</p>
+    <h3 className="text-white text-2xl font-bold">{assignment.max_score || 100}%</h3>
+  </div>
+  <div className="bg-gray-800 rounded-2xl p-4">
+    <p className="text-gray-500 text-sm">Due Date</p>
+    <h3 className="text-white text-sm font-bold mt-1">
+      {/* 🔥 Fix: formatea la fecha bonita sin la hora basura */}
+      {assignment.due_date
+        ? new Date(assignment.due_date).toLocaleDateString("es-MX", {
+            day: "numeric", month: "short", year: "numeric"
+          })
+        : "No deadline"}
+    </h3>
+  </div>
+  <div className="bg-gray-800 rounded-2xl p-4">
+    <p className="text-gray-500 text-sm">Group</p>
+    <h3 className="text-white text-sm font-bold mt-1">
+      {/* 🔥 Fix: fallback más claro si no llega el nombre */}
+      {assignment.group_name || "Unassigned"}
+    </h3>
+  </div>
+</div>
 
               {(isAdmin || isTeacher) && (
                 <div className="flex gap-3 mt-6">
