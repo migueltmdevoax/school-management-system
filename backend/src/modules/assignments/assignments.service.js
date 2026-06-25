@@ -51,11 +51,14 @@ export const getAssignmentById = async (id) => {
   return rows[0];
 };
 
+// 🔥 FIX CRÍTICO: ahora también crea los registros en assignment_students
+// para cada alumno del grupo, así los parents pueden verlo
 export const createAssignment = async ({
   title, description, group_id, teacher_id,
   due_date, attachment_url, attachment_type,
   max_score, allow_comments, published,
 }) => {
+  // 1. Crear el assignment
   const { rows } = await db.query(
     `
     INSERT INTO assignments (
@@ -69,7 +72,32 @@ export const createAssignment = async ({
     [title, description, group_id, teacher_id, due_date,
      attachment_url, attachment_type, max_score, allow_comments, published]
   );
-  return rows[0];
+
+  const assignment = rows[0];
+
+  // 2. 🔥 Buscar todos los alumnos del grupo
+  const studentsResult = await db.query(
+    `SELECT id FROM students WHERE group_id = $1`,
+    [group_id]
+  );
+
+  // 3. 🔥 Crear assignment_students para cada alumno del grupo
+  // Esto es lo que permite que los parents vean la tarea
+  if (studentsResult.rows.length > 0) {
+    const values = studentsResult.rows
+      .map((_, i) => `($1, $${i + 2}, 'pending')`)
+      .join(", ");
+    const params = [assignment.id, ...studentsResult.rows.map((s) => s.id)];
+
+    await db.query(
+      `INSERT INTO assignment_students (assignment_id, student_id, status)
+       VALUES ${values}
+       ON CONFLICT (assignment_id, student_id) DO NOTHING`,
+      params
+    );
+  }
+
+  return assignment;
 };
 
 export const updateAssignment = async (id, data) => {
