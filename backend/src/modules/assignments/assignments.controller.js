@@ -1,5 +1,7 @@
 import * as assignmentsService from "./assignments.service.js";
 import db from "../../config/db.js";
+import { emitToRole } from "../../realtime/emitters.js";
+import { EVENTS } from "../../realtime/events.js";
 
 const resolveTeacherId = async (user) => {
   if (user.teacher_id) return user.teacher_id;
@@ -75,6 +77,12 @@ export const createAssignment = async (req, res, next) => {
       ...req.body,
       teacher_id: resolvedTeacherId,
     });
+
+    // 🔥 FIX: emite el evento por socket para notificar a admin, teacher y parents
+    emitToRole("admin",   EVENTS.ASSIGNMENT_CREATED || "assignment_created", assignment);
+    emitToRole("teacher", EVENTS.ASSIGNMENT_CREATED || "assignment_created", assignment);
+    emitToRole("parent",  EVENTS.ASSIGNMENT_CREATED || "assignment_created", assignment);
+
     return res.status(201).json({ success: true, data: assignment });
   } catch (error) { next(error); }
 };

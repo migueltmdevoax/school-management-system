@@ -8,6 +8,10 @@ export const EVENTS = {
   NOTIFICATION_CREATED:
     "notification_created",
 
+  // assignments
+  ASSIGNMENT_CREATED: 
+    "assignment_created",  
+
   // 💰 payments
   PAYMENT_CREATED:
     "payment_created",
