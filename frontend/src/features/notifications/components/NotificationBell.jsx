@@ -89,9 +89,13 @@ export default function NotificationBell() {
       {/* 📋 DROPDOWN */}
       {open && (
         <div
-          className="absolute left-0 top-12 w-80 bg-gray-950 border border-gray-800 rounded-3xl shadow-2xl z-[9999] overflow-hidden flex flex-col"
-          style={{ maxHeight: "min(380px, calc(100vh - 160px))" }}
-        >
+  className="fixed w-80 bg-gray-950 border border-gray-800 rounded-3xl shadow-2xl z-[99999] overflow-hidden flex flex-col"
+  style={{
+    maxHeight: "min(320px, calc(100vh - 160px))",
+    top: "60px",
+    left: "300px", // ajusta este valor según el ancho de tu sidebar/header
+  }}
+>
           {/* HEADER — fijo */}
           <div className="flex items-center justify-between p-4 border-b border-gray-800 shrink-0">
             <div>

@@ -11,7 +11,7 @@ import { useGetMyAssignmentsQuery } from "../../features/assignments/api/assignm
 import { apiSlice }                 from "../../app/api/apiSlice";
 import AsyncStorage                 from "@react-native-async-storage/async-storage";
 
-const API_URL = "http://192.168.1.71:3000/api";
+const API_URL = "https://school-management-system-production-2929.up.railway.app/api";
 
 export default function GradesScreen() {
   const dispatch = useDispatch();

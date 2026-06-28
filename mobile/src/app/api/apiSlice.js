@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // IP de tu Mac en la red local — cámbiala por la tuya
 // En terminal: ifconfig | grep "inet " | grep -v 127.0.0.1
-const API_URL = "http://192.168.1.71:3000/api";
+const API_URL = "https://school-management-system-production-2929.up.railway.app/api";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
