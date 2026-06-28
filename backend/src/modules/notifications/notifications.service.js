@@ -1,6 +1,6 @@
 import db from "../../config/db.js";
 import { emitNotificationCreated } from "../../realtime/emitters.js";
-import { sendIncidentEmail, sendPaymentEmail } from "../../services/email.service.js";
+import { sendIncidentEmail, sendPaymentEmail, sendAssignmentEmail } from "../../services/email.service.js";
 
 export async function createNotification({ userId, title, message, type = null, relatedId = null }) {
   const result = await db.query(
@@ -139,13 +139,18 @@ export async function notifyParentsOfIncident(studentId, title, severity = "HIGH
   });
 }
 
-export async function notifyParentsOfAssignment(groupId, title) {
+export async function notifyParentsOfAssignment(groupId, title, dueDate = null) {
   const result = await db.query(
-    `SELECT DISTINCT u.id AS user_id, u.email, p.first_name, p.last_name
+    `SELECT DISTINCT
+       u.id AS user_id, u.email,
+       p.first_name, p.last_name,
+       s.first_name AS student_first, s.last_name AS student_last,
+       g.name AS group_name
      FROM students s
      JOIN parent_students ps ON ps.student_id = s.id
      JOIN parents p ON p.id = ps.parent_id
      JOIN users u ON u.id = p.user_id
+     LEFT JOIN groups g ON g.id = s.group_id
      WHERE s.group_id = $1`,
     [groupId]
   );
@@ -156,6 +161,15 @@ export async function notifyParentsOfAssignment(groupId, title) {
       title:   "📚 Nueva tarea asignada",
       message: `Se publicó una nueva tarea: ${title}`,
       type:    "assignment",
+    });
+
+    await sendAssignmentEmail({
+      toEmail:         row.email,
+      parentName:      `${row.first_name || ""} ${row.last_name || ""}`.trim(),
+      studentName:     `${row.student_first} ${row.student_last}`,
+      assignmentTitle: title,
+      dueDate,
+      groupName:       row.group_name,
     });
   }
 }

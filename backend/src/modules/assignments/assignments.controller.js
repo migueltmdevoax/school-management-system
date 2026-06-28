@@ -79,7 +79,7 @@ export const createAssignment = async (req, res, next) => {
       teacher_id: resolvedTeacherId,
     });
 
-    await notifyParentsOfAssignment(assignment.group_id, assignment.title);
+    await notifyParentsOfAssignment(assignment.group_id, assignment.title, assignment.due_date);
 
 
     // 🔥 FIX: emite el evento por socket para notificar a admin, teacher y parents
