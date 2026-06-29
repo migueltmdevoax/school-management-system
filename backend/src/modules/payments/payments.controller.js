@@ -1,5 +1,6 @@
 import * as paymentsService from "./payments.service.js";
 import db from "../../config/db.js";
+import { notifyParentsOfPayment } from "../notifications/notifications.service.js";
 
 const resolveParentId = async (user) => {
   if (user.parent_id) return user.parent_id;
@@ -13,7 +14,6 @@ export const getAllPayments = async (req, res, next) => {
   try {
     const { role } = req.user;
 
-    // 🔥 Parent solo ve sus propios pagos
     if (role === "parent") {
       const parentId = await resolveParentId(req.user);
       if (!parentId) {
@@ -23,7 +23,6 @@ export const getAllPayments = async (req, res, next) => {
       return res.json({ success: true, data });
     }
 
-    // Admin ve todos
     const data = await paymentsService.getAllPayments();
     return res.json({ success: true, data });
   } catch (error) { next(error); }
@@ -38,7 +37,12 @@ export const createPayment = async (req, res, next) => {
         message: "studentId and amount are required",
       });
     }
+
     const payment = await paymentsService.createPayment({ studentId, amount, dueDate });
+
+    // 🔥 FIX: notifica a parents + admin, e incluye el email
+    await notifyParentsOfPayment(studentId, amount);
+
     return res.status(201).json({ success: true, data: payment });
   } catch (error) { next(error); }
 };

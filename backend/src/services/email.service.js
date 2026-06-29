@@ -71,7 +71,7 @@ export async function sendPaymentEmail({ toEmail, parentName, studentName, amoun
             <p>Estimado/a <strong>${parentName}</strong>,</p>
             <p>Hay un pago pendiente para <strong>${studentName}</strong>:</p>
             <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 16px 0;">
-              <p style="margin:0; font-weight:bold; color:#92400e;">Monto: $${Number(amount).toFixed(2)} MXN</p>
+              <p style="margin:0; font-weight:bold; color:#92400e;">Monto: $${Number(amount).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN</p>
               ${dueDate ? `<p style="margin:8px 0 0; color:#92400e;">Vencimiento: ${dueDate}</p>` : ""}
             </div>
             <a href="${process.env.FRONTEND_URL}"
