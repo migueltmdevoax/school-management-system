@@ -22,7 +22,7 @@ ParentAttendanceTable({
         text-white
       ">
 
-        📅 Attendance
+        📅 Asistencia del alumno
 
       </h3>
 
@@ -49,7 +49,7 @@ ParentAttendanceTable({
               text-gray-400
             ">
 
-              Student
+              Estudiante
 
             </th>
 
@@ -62,7 +62,7 @@ ParentAttendanceTable({
               text-gray-400
             ">
 
-              Status
+              Estado
 
             </th>
 
@@ -75,7 +75,7 @@ ParentAttendanceTable({
               text-gray-400
             ">
 
-              Date
+              Fecha
 
             </th>
 

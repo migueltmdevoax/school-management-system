@@ -13,7 +13,7 @@ const GlobalSearchResults = ({ results }) => {
     <div className="space-y-6">
       {results.students?.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase text-gray-400">Students</p>
+          <p className="mb-2 text-xs font-semibold uppercase text-gray-400">Estudiantes</p>
           <div className="space-y-2">
             {results.students.map((s) => (
               <button key={s.id} onClick={() => handleOpen(s)}

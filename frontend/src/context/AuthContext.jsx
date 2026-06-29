@@ -336,7 +336,7 @@ export function AuthProvider({
           " />
 
           <p className="text-gray-400">
-            Restoring session...
+            Restaurando sesión...
           </p>
 
         </div>

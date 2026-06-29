@@ -21,7 +21,7 @@ const formatTime = (dateStr) => {
   const now  = new Date();
   const diff = Math.floor((now - date) / 1000);
 
-  if (diff < 60)    return "Just now";
+  if (diff < 60)    return "Justo ahora";
   if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return date.toLocaleDateString("es-MX", {
@@ -109,7 +109,7 @@ export default function NotificationBell() {
                 onClick={handleMarkAllRead}
                 className="text-blue-400 hover:text-blue-300 text-xs font-semibold transition"
               >
-                Mark all read
+                Marcar como todos leídos
               </button>
             )}
           </div>
@@ -119,7 +119,7 @@ export default function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-3xl mb-2">🔕</p>
-                <p className="text-gray-400 text-sm">No notifications yet</p>
+                <p className="text-gray-400 text-sm">Sin notificaciones todavia</p>
               </div>
             ) : (
               notifications.slice(0, 20).map((n) => {
@@ -167,7 +167,7 @@ export default function NotificationBell() {
                 onClick={() => { navigate("/app/notifications"); setOpen(false); }}
                 className="text-blue-400 hover:text-blue-300 text-xs font-semibold transition"
               >
-                View all notifications →
+                Ver todas las notificaciones →
               </button>
             </div>
           )}

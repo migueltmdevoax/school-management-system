@@ -22,7 +22,7 @@ ParentPaymentsTable({
         text-white
       ">
 
-        💰 Payments
+        💰 Pagos
 
       </h3>
 
@@ -45,19 +45,19 @@ ParentPaymentsTable({
           ">
 
             <th className="pb-4 text-gray-400">
-              Student
+              Estudiante
             </th>
 
             <th className="pb-4 text-gray-400">
-              Amount
+              Cantidad
             </th>
 
             <th className="pb-4 text-gray-400">
-              Status
+              Estado
             </th>
 
             <th className="pb-4 text-gray-400">
-              Due Date
+              Fecha limite
             </th>
 
           </tr>

@@ -18,7 +18,7 @@ export default function DashboardMiniChart() {
       text-gray-500
     ">
 
-      Chart placeholder
+      Esquema de gráfica
 
     </div>
 

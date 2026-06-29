@@ -10,8 +10,8 @@ export default function ParentsPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">👨‍👩‍👧 Parents</h1>
-        <p className="text-gray-400 mt-1">Family management</p>
+        <h1 className="text-3xl font-bold text-white">👨‍👩‍👧 Padres de familia</h1>
+        <p className="text-gray-400 mt-1">Control familiar</p>
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-gray-800">
@@ -26,7 +26,7 @@ export default function ParentsPage() {
           <tbody>
             {students.length === 0 ? (
               <tr>
-                <td colSpan={4} className="p-10 text-center text-gray-500">No students found</td>
+                <td colSpan={4} className="p-10 text-center text-gray-500">Sin estudiantes encontrados</td>
               </tr>
             ) : (
               students.map((s) => (

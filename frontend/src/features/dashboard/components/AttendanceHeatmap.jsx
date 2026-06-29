@@ -7,8 +7,8 @@ export default function AttendanceHeatmap({ data = [] }) {
   return (
     <div className="rounded-3xl border border-gray-800 bg-gray-950 p-6">
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-white">Attendance Heatmap</h3>
-        <p className="mt-1 text-sm text-gray-400">Last 30 days</p>
+        <h3 className="text-xl font-bold text-white">Mapa de calor de asistencia</h3>
+        <p className="mt-1 text-sm text-gray-400">Ultimos 30 dias</p>
       </div>
       <div className="grid grid-cols-5 md:grid-cols-10 gap-3">
         {data.map((day) => (

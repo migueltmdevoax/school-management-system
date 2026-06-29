@@ -53,7 +53,7 @@ export default function AttendanceLiveFeed({
           text-white
         ">
 
-          Live Attendance
+          Asistencia en tiempo real
 
         </h3>
 

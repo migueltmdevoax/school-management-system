@@ -1,4 +1,4 @@
 import EmptyState from "./EmptyState";
 export default function EmptySearch() {
-  return <EmptyState icon="🔍" title="No results found" description="Try a different search term." />;
+  return <EmptyState icon="🔍" title="Sin resultados" description="Intenta buscar un termino diferente." />;
 }

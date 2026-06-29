@@ -21,7 +21,7 @@ ParentAssignmentsList({
         text-white
       ">
 
-        📝 Assignments
+        📝 Tareas
 
       </h3>
 
@@ -78,7 +78,7 @@ ParentAssignmentsList({
                 text-indigo-400
               ">
 
-                Due:
+                Fecha limite:
                 {" "}
                 {assignment.due_date}
 

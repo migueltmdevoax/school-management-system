@@ -1,4 +1,4 @@
-export default function EmptyState({ icon = "📭", title = "No data", description = "Nothing found", action = null }) {
+export default function EmptyState({ icon = "📭", title = "Sin informacion", description = "No se encontro nada", action = null }) {
   return (
     <div className="rounded-3xl border border-gray-800 bg-gray-900/50 p-12 text-center">
       <div className="text-6xl">{icon}</div>

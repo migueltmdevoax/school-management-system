@@ -21,7 +21,7 @@ ParentIncidentsList({
         text-white
       ">
 
-        🚨 Incidents
+        🚨 Incidentes
 
       </h3>
 

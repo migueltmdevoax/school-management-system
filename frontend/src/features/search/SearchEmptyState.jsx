@@ -19,7 +19,7 @@ const SearchEmptyState = () => {
           font-semibold
         "
       >
-        No results found
+        No se encontraron resultados
       </h3>
 
       <p
@@ -29,7 +29,7 @@ const SearchEmptyState = () => {
           text-gray-500
         "
       >
-        Try another search term
+        Intenta buscar con otro termino
       </p>
 
     </div>

@@ -26,7 +26,7 @@ export default function Header() {
           text-white
         ">
 
-          🚀 School SaaS
+          🚀 Plataforma Escolar
 
         </h1>
 
@@ -39,7 +39,7 @@ export default function Header() {
           text-gray-400
         ">
 
-          Administrative workspace
+          Área administrativa de trabajo
 
         </p>
 
@@ -128,7 +128,7 @@ export default function Header() {
               text-white
             ">
 
-              Admin
+              Usuario
 
             </p>
 
@@ -141,7 +141,7 @@ export default function Header() {
               text-gray-400
             ">
 
-              Online
+              En linea
 
             </p>
 

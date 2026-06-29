@@ -27,7 +27,7 @@ TeacherAttendanceSummary({
           text-gray-400
         ">
 
-          Present
+          Presente
 
         </p>
 
@@ -65,7 +65,7 @@ TeacherAttendanceSummary({
           text-gray-400
         ">
 
-          Absent
+          Ausente
 
         </p>
 
@@ -103,7 +103,7 @@ TeacherAttendanceSummary({
           text-gray-400
         ">
 
-          Attendance Rate
+          Tasa de asistencia
 
         </p>
 

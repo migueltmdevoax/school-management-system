@@ -6,7 +6,7 @@ export default function RiskLevelBadge({ level }) {
   };
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${styles[level] || styles.low}`}>
-      {level} risk
+      {level} peligro
     </span>
   );
 }

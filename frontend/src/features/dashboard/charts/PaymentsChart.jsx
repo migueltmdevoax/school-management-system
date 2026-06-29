@@ -3,7 +3,7 @@ import ChartCard from "./ChartCard";
 
 export default function PaymentsChart({ data }) {
   return (
-    <ChartCard title="Payments">
+    <ChartCard title="Pagos">
       <div style={{ width: "100%", minHeight: 288 }}>
         <ResponsiveContainer width="100%" height={288}>
           <BarChart data={data}>

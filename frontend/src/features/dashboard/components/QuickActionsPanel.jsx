@@ -8,8 +8,8 @@ export default function QuickActionsPanel() {
   return (
     <div className="rounded-3xl border border-gray-800 bg-gray-900/70 backdrop-blur-xl p-6 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-2xl font-black text-white">Quick Actions</h2>
-        <p className="mt-2 text-gray-400">Common admin operations</p>
+        <h2 className="text-2xl font-black text-white">Acciones rapidas</h2>
+        <p className="mt-2 text-gray-400">Operaciones administrativas comunes</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <QuickActionButton icon="👨‍🎓" title="Create Student" description="Register new student"

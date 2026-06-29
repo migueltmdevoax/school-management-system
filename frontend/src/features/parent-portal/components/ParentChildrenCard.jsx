@@ -21,7 +21,7 @@ ParentChildrenCard({
         text-white
       ">
 
-        👨‍👩‍👧 My Children
+        👨‍👩‍👧 Mi hij@
 
       </h3>
 

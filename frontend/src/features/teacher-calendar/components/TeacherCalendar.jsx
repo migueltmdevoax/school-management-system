@@ -21,7 +21,7 @@ TeacherCalendar({
         text-white
       ">
 
-        📅 Teacher Calendar
+        📅 Calendario para el maestro
 
       </h2>
 
@@ -98,7 +98,7 @@ TeacherCalendar({
 
               <span>
 
-                Start:
+                Inicio:
                 {" "}
                 {event.start_date}
 
@@ -110,7 +110,7 @@ TeacherCalendar({
 
               <span>
 
-                End:
+                Fin:
                 {" "}
                 {event.end_date}
 

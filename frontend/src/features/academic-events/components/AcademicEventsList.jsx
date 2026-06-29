@@ -21,7 +21,7 @@ AcademicEventsList({
         text-white
       ">
 
-        🏫 Academic Events
+        🏫 Eventos Académicos
 
       </h2>
 

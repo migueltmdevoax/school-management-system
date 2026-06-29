@@ -32,10 +32,10 @@ export default function AssignmentsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-black text-white">📚 Assignments</h1>
-          <p className="text-gray-400 mt-1">{assignments.length} total assignments</p>
+          <h1 className="text-4xl font-black text-white">📚 Tareas</h1>
+          <p className="text-gray-400 mt-1">{assignments.length} total tareas</p>
           <p className="text-gray-400 mt-1">
-            {isParent ? "Your children's assignments" : "Classroom workflow engine"}
+            {isParent ? "Tareas de tu hij@" : "Classroom workflow engine"}
           </p>
         </div>
         {(isAdmin || isTeacher) && (
@@ -43,7 +43,7 @@ export default function AssignmentsPage() {
             onClick={() => setOpenModal(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold"
           >
-            + New Assignment
+            + Nueva Tarea
           </button>
         )}
       </div>
@@ -51,8 +51,8 @@ export default function AssignmentsPage() {
       {assignments.length === 0 ? (
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-12 text-center text-gray-400">
           <p className="text-5xl mb-4">📚</p>
-          <p className="text-xl font-bold text-white">No assignments yet</p>
-          {isParent && <p className="mt-2 text-gray-400">Assignments from teachers will appear here</p>}
+          <p className="text-xl font-bold text-white">No hay tareas todavia</p>
+          {isParent && <p className="mt-2 text-gray-400">Tareas de los maestros aparecerán aqui</p>}
         </div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -78,11 +78,11 @@ export default function AssignmentsPage() {
 
               <div className="grid grid-cols-3 gap-4 mt-6">
   <div className="bg-gray-800 rounded-2xl p-4">
-    <p className="text-gray-500 text-sm">Weight</p>
+    <p className="text-gray-500 text-sm">Peso</p>
     <h3 className="text-white text-2xl font-bold">{assignment.max_score || 100}%</h3>
   </div>
   <div className="bg-gray-800 rounded-2xl p-4">
-    <p className="text-gray-500 text-sm">Due Date</p>
+    <p className="text-gray-500 text-sm">Fecha limite</p>
     <h3 className="text-white text-sm font-bold mt-1">
       {/* 🔥 Fix: formatea la fecha bonita sin la hora basura */}
       {assignment.due_date
@@ -104,13 +104,13 @@ export default function AssignmentsPage() {
               {(isAdmin || isTeacher) && (
                 <div className="flex gap-3 mt-6">
                   <button className="px-4 py-2 rounded-xl bg-gray-800 text-white hover:bg-gray-700 text-sm">
-                    Edit
+                    Editar
                   </button>
                   <button
                     onClick={() => deleteAssignment(assignment.id)}
                     className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 text-sm"
                   >
-                    Delete
+                    Borrar
                   </button>
                 </div>
               )}

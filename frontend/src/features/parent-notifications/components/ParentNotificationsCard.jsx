@@ -21,7 +21,7 @@ ParentNotificationsCard({
         text-white
       ">
 
-        🔔 Notifications
+        🔔 Notificaciones
 
       </h3>
 

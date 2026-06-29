@@ -22,7 +22,7 @@ ParentGradesTable({
         text-white
       ">
 
-        📘 Grades
+        📘 Calificaciones
 
       </h3>
 
@@ -49,7 +49,7 @@ ParentGradesTable({
               text-gray-400
             ">
 
-              Student
+              Estudiante
 
             </th>
 
@@ -62,7 +62,7 @@ ParentGradesTable({
               text-gray-400
             ">
 
-              Subject
+              Materia
 
             </th>
 
@@ -75,7 +75,7 @@ ParentGradesTable({
               text-gray-400
             ">
 
-              Grade
+              Calificacion
 
             </th>
 
@@ -88,7 +88,7 @@ ParentGradesTable({
               text-gray-400
             ">
 
-              Date
+              Fecha
 
             </th>
 

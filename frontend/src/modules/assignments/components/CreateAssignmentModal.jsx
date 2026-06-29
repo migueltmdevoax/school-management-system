@@ -92,8 +92,8 @@ export default function CreateAssignmentModal({ open, onClose }) {
         {/* HEADER */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-black text-white">📚 Create Assignment</h2>
-            <p className="text-gray-400 mt-1">Classroom workflow</p>
+            <h2 className="text-3xl font-black text-white">📚 Crear tarea</h2>
+            <p className="text-gray-400 mt-1">Flujo de trabajo del salon</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl transition-all">✕</button>
         </div>
@@ -108,7 +108,7 @@ export default function CreateAssignmentModal({ open, onClose }) {
 
           {/* TITLE */}
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Title *</label>
+            <label className="text-sm text-gray-400 mb-1 block">Titulo *</label>
             <input
               type="text" name="title" placeholder="Examen de Matematicas"
               value={formData.title} onChange={handleChange} required disabled={isLoading}
@@ -118,7 +118,7 @@ export default function CreateAssignmentModal({ open, onClose }) {
 
           {/* DESCRIPTION */}
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Description</label>
+            <label className="text-sm text-gray-400 mb-1 block">Descripcion</label>
             <textarea
               name="description" rows="4" placeholder="Write assignment instructions..."
               value={formData.description} onChange={handleChange} disabled={isLoading}
@@ -128,7 +128,7 @@ export default function CreateAssignmentModal({ open, onClose }) {
 
           {/* GROUP */}
           <div>
-            <label className="text-sm text-gray-400 mb-1 block">Group *</label>
+            <label className="text-sm text-gray-400 mb-1 block">Grupo *</label>
             <select
               name="group_id" value={formData.group_id} onChange={handleChange}
               required disabled={isLoading || groupsLoading}
@@ -144,7 +144,7 @@ export default function CreateAssignmentModal({ open, onClose }) {
           {/* GRID: DUE DATE (calendario nativo) + WEIGHT % */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">Due Date</label>
+              <label className="text-sm text-gray-400 mb-1 block">Fecha limite</label>
               {/* 🔥 input type="date" ya trae el ícono de calendario nativo del navegador */}
               <input
                 type="date" name="due_date" value={formData.due_date}
@@ -154,7 +154,7 @@ export default function CreateAssignmentModal({ open, onClose }) {
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">Weight (%)</label>
+              <label className="text-sm text-gray-400 mb-1 block">Peso (%)</label>
               <div className="relative">
                 <input
                   type="number" name="max_score" min="1" max="100" step="0.5"
@@ -170,11 +170,11 @@ export default function CreateAssignmentModal({ open, onClose }) {
           <div className="flex justify-end gap-3 pt-4">
             <button type="button" onClick={onClose} disabled={isLoading}
               className="px-5 py-3 rounded-2xl bg-gray-800 hover:bg-gray-700 text-white transition-all">
-              Cancel
+              Cancelar
             </button>
             <button type="submit" disabled={isLoading || groupsLoading}
               className="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold transition-all">
-              {isLoading ? "Creating..." : "🚀 Publish Assignment"}
+              {isLoading ? "Creando..." : "🚀 Publicar Tarea"}
             </button>
           </div>
         </form>

@@ -29,15 +29,15 @@ const BulkActionsBar = () => {
       <div className="flex items-center gap-2">
         <button onClick={handleExport}
           className="rounded-xl border border-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800">
-          Export CSV
+          Exportar CSV
         </button>
         <button onClick={handleBulkDelete} disabled={isLoading}
           className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 disabled:opacity-50">
-          {isLoading ? "Deleting..." : "Delete"}
+          {isLoading ? "Borrando..." : "Borrar"}
         </button>
         <button onClick={clear}
           className="rounded-xl border border-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800">
-          Clear
+          Borrar
         </button>
       </div>
     </div>

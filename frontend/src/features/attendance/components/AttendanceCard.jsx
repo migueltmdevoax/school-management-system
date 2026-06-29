@@ -28,7 +28,7 @@ export default function AttendanceCard({
             text-white
           ">
 
-            Attendance
+            Asistencia
 
           </h3>
 

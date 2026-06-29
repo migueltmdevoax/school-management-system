@@ -18,7 +18,7 @@ export default function GradeList({
       <p className="
         text-gray-400
       ">
-        No grades found
+        No se encontraron calificaciones
       </p>
 
     );
@@ -61,7 +61,7 @@ export default function GradeList({
               text-gray-400
               text-sm
             ">
-              Student:
+              Estudiante:
               {" "}
               {grade.student_name}
             </p>

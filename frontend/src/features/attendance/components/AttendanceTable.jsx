@@ -30,14 +30,14 @@ export default function AttendanceTable({
               p-4
               text-left
             ">
-              Date
+              Fecha
             </th>
 
             <th className="
               p-4
               text-left
             ">
-              Status
+              Estado
             </th>
 
           </tr>

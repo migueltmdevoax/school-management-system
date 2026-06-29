@@ -17,16 +17,16 @@ export default function AdminDashboard() {
   const { data, isLoading, isError } = useGetDashboardQuery();
 
   if (isLoading) return <div className="p-6"><SkeletonDashboard /></div>;
-  if (isError)   return <div className="p-6 text-red-400">Error loading dashboard</div>;
+  if (isError)   return <div className="p-6 text-red-400">Error al cargar el panel central</div>;
 
   const metrics = data?.data;
-  if (!metrics)  return <div className="p-6 text-gray-400">No data available</div>;
+  if (!metrics)  return <div className="p-6 text-gray-400">Sin informacion disponible</div>;
 
   return (
     <div className="space-y-8 p-6">
       <div>
-        <h1 className="text-4xl font-black text-white">🚀 Admin Dashboard</h1>
-        <p className="text-gray-400 mt-2">Realtime school analytics</p>
+        <h1 className="text-4xl font-black text-white">🚀 Panel central administrativo</h1>
+        <p className="text-gray-400 mt-2">Analisis en tiempo real</p>
       </div>
 
       <DashboardGrid>

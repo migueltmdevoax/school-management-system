@@ -186,8 +186,8 @@ const CreateIncidentQuickAction = ({
     >
 
       {loading
-        ? "Creating..."
-        : "Create Incident"}
+        ? "Creando..."
+        : "Crear Incident"}
 
     </button>
 

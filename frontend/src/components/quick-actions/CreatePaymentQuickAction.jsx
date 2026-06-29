@@ -69,8 +69,8 @@ const CreatePaymentQuickAction = ({
     >
 
       {loading
-        ? "Creating..."
-        : "Create Payment"}
+        ? "Creando..."
+        : "Crear pago"}
 
     </button>
 

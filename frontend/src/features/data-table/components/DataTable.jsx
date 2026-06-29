@@ -20,8 +20,8 @@ export default function DataTable({ data = [], columns = [], loading = false, se
   const { paginatedData, totalPages } = usePagination(sortedData, page, 10);
 
   if (loading) return <TableLoading />;
-  if (!loading && data.length === 0) return <TableEmpty message="No students found" />;
-  if (!loading && filteredData.length === 0) return <TableEmpty message="No results for your search" />;
+  if (!loading && data.length === 0) return <TableEmpty message="No se encontraron estudiantes" />;
+  if (!loading && filteredData.length === 0) return <TableEmpty message="Sin resultados para su busqueda" />;
 
   return (
     <div>

@@ -27,7 +27,7 @@ ParentNotificationsList({
           text-white
         ">
 
-          🔔 Notifications
+          🔔 Notificaciones
 
         </h3>
 
@@ -111,7 +111,7 @@ ParentNotificationsList({
                   text-indigo-400
                 ">
 
-                  NEW
+                  NUEVO
 
                 </span>
 

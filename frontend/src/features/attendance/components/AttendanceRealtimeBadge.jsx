@@ -25,7 +25,7 @@ export default function AttendanceRealtimeBadge() {
         animate-pulse
       " />
 
-      LIVE
+      En vivo
 
     </div>
 

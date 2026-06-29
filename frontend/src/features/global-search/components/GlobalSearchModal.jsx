@@ -28,7 +28,7 @@ export default function GlobalSearchModal({ onClose }) {
           <input
             autoFocus value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search anything..."
+            placeholder="Buscar cualquier cosa..."
             className="w-full bg-transparent text-lg text-white outline-none placeholder:text-gray-500"
           />
         </div>
@@ -43,7 +43,7 @@ export default function GlobalSearchModal({ onClose }) {
             </button>
           ))}
           {query && results.length === 0 && (
-            <p className="p-6 text-center text-gray-500">No results found</p>
+            <p className="p-6 text-center text-gray-500">Sin resultados encontrados</p>
           )}
         </div>
       </div>

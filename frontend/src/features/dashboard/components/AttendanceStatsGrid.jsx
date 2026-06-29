@@ -4,9 +4,9 @@ export default function AttendanceStatsGrid({ stats }) {
   if (!stats) return null;
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <DashboardCard title="Present" value={stats.present} icon="🟢" subtitle="Students present" />
-      <DashboardCard title="Absent"  value={stats.absent}  icon="🔴" subtitle="Students absent" />
-      <DashboardCard title="Late"    value={stats.late}    icon="🟡" subtitle="Late arrivals" />
+      <DashboardCard title="Presente" value={stats.present} icon="🟢" subtitle="Students present" />
+      <DashboardCard title="Ausente"  value={stats.absent}  icon="🔴" subtitle="Students absent" />
+      <DashboardCard title="Con retardo"    value={stats.late}    icon="🟡" subtitle="Late arrivals" />
     </div>
   );
 }

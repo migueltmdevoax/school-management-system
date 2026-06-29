@@ -110,7 +110,7 @@ const KpiCard = ({
                 font-medium
 
                 ${
-                  trend === "up"
+                  trend === "arriba"
                     ? "bg-green-500/20 text-green-400"
                     : "bg-red-500/20 text-red-400"
                 }
@@ -118,7 +118,7 @@ const KpiCard = ({
             >
 
               {
-                trend === "up"
+                trend === "arriba"
                   ? "↑"
                   : "↓"
               }

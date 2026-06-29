@@ -27,7 +27,7 @@ TeacherAttendanceCard({
           text-white
         ">
 
-          👨‍🏫 Teacher Attendance
+          👨‍🏫 Assistencia del maestro
 
         </h3>
 
@@ -40,7 +40,7 @@ TeacherAttendanceCard({
           text-gray-400
         ">
 
-          Today
+          Hoy
 
         </span>
 
