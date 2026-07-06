@@ -2,10 +2,7 @@ import db from "../../config/db.js";
 
 export const getAllPayments = async () => {
   const { rows } = await db.query(`
-    SELECT
-      p.*,
-      s.first_name,
-      s.last_name
+    SELECT p.*, s.first_name, s.last_name
     FROM payments p
     JOIN students s ON s.id = p.student_id
     ORDER BY p.created_at DESC
@@ -15,10 +12,7 @@ export const getAllPayments = async () => {
 
 export const getPaymentsByParent = async (parentId) => {
   const { rows } = await db.query(`
-    SELECT
-      p.*,
-      s.first_name,
-      s.last_name
+    SELECT p.*, s.first_name, s.last_name
     FROM payments p
     JOIN students s ON s.id = p.student_id
     JOIN parent_students ps ON ps.student_id = s.id
@@ -37,15 +31,30 @@ export const createPayment = async ({ studentId, amount, dueDate }) => {
   return rows[0];
 };
 
+// 🔥 FIX: transacción atómica — protege contra doble-click y concurrencia
 export const markAsPaid = async (id) => {
-  const { rows } = await db.query(`
-    UPDATE payments
-    SET status = 'PAID', paid_at = NOW(), updated_at = NOW()
-    WHERE id = $1
-    RETURNING *
-  `, [id]);
-  if (!rows[0]) throw new Error("Payment not found");
-  return rows[0];
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+    const { rows } = await client.query(
+      `UPDATE payments
+       SET status = 'PAID', paid_at = NOW(), updated_at = NOW()
+       WHERE id = $1 AND status != 'PAID'
+       RETURNING *`,
+      [id]
+    );
+    if (rows.length === 0) {
+      await client.query("ROLLBACK");
+      throw new Error("Payment already marked as paid or not found");
+    }
+    await client.query("COMMIT");
+    return rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 export const deletePayment = async (id) => {
