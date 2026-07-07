@@ -22,6 +22,14 @@ import ProtectedRoute    from "../routes/ProtectedRoute";
 import RoleRoute         from "../routes/RoleRoute";
 import RoleBasedRedirect from "../routes/RoleBasedRedirect";
 
+// 🔥 V2.0 — Estancia Infantil
+import DailyReportPage   from "../modules/estancia/pages/DailyReportPage";
+import PickupControlPage from "../modules/estancia/pages/PickupControlPage";
+import MilestonesPage    from "../modules/estancia/pages/MilestonesPage";
+import MedicationLogPage from "../modules/estancia/pages/MedicationLogPage";
+import AllergiesPage     from "../modules/estancia/pages/AllergiesPage";
+import MessagesPage      from "../modules/estancia/pages/MessagesPage";
+
 export default function App() {
   const { isAuthenticated } = useSelector((s) => s.auth);
 
@@ -38,6 +46,7 @@ export default function App() {
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<RoleBasedRedirect />} />
 
+          {/* ADMIN */}
           <Route path="admin/dashboard" element={
             <RoleRoute allowedRoles={["admin"]}><AdminDashboard /></RoleRoute>
           } />
@@ -53,12 +62,18 @@ export default function App() {
           <Route path="payments" element={
             <RoleRoute allowedRoles={["admin","parent"]}><PaymentsPage /></RoleRoute>
           } />
+
+          {/* TEACHER */}
           <Route path="teacher/dashboard" element={
             <RoleRoute allowedRoles={["teacher"]}><TeacherDashboard /></RoleRoute>
           } />
+
+          {/* PARENT */}
           <Route path="parent/dashboard" element={
             <RoleRoute allowedRoles={["parent"]}><ParentDashboard /></RoleRoute>
           } />
+
+          {/* SHARED */}
           <Route path="assignments" element={
             <RoleRoute allowedRoles={["admin","teacher","parent"]}><AssignmentsPage /></RoleRoute>
           } />
@@ -70,6 +85,26 @@ export default function App() {
           } />
           <Route path="incidents" element={
             <RoleRoute allowedRoles={["admin","teacher"]}><IncidentsPage /></RoleRoute>
+          } />
+
+          {/* 🔥 V2.0 — ESTANCIA INFANTIL */}
+          <Route path="daily-reports" element={
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><DailyReportPage /></RoleRoute>
+          } />
+          <Route path="pickup-control" element={
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><PickupControlPage /></RoleRoute>
+          } />
+          <Route path="milestones" element={
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><MilestonesPage /></RoleRoute>
+          } />
+          <Route path="medication-log" element={
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><MedicationLogPage /></RoleRoute>
+          } />
+          <Route path="allergies" element={
+            <RoleRoute allowedRoles={["admin","teacher"]}><AllergiesPage /></RoleRoute>
+          } />
+          <Route path="messages" element={
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><MessagesPage /></RoleRoute>
           } />
 
           <Route path="*" element={<RoleBasedRedirect />} />
