@@ -35,6 +35,15 @@ import teacherCalendarRoutes   from "./modules/teacher-calendar/teacherCalendar.
 import academicEventsRoutes    from "./modules/academic-events/academicEvents.routes.js";
 import meRoutes                from "./modules/me/me.routes.js";
 
+//ROUTES FROM ESTANCIA
+import schoolConfigRoutes  from "./modules/school-config/school-config.routes.js";
+import allergiesRoutes      from "./modules/allergies/allergies.routes.js";
+import dailyReportsRoutes   from "./modules/daily-reports/daily-reports.routes.js";
+import pickupControlRoutes  from "./modules/pickup-control/pickup-control.routes.js";
+import milestonesRoutes     from "./modules/milestones/milestones.routes.js";
+import medicationLogRoutes  from "./modules/medication-log/medication-log.routes.js";
+import messagesRoutes       from "./modules/messages/messages.routes.js";
+
 const app = express();
 
 // ============================================================
@@ -125,6 +134,14 @@ app.use("/api/parent-assignments",    parentAssignmentsRoutes);
 app.use("/api/teacher-calendar",      teacherCalendarRoutes);
 app.use("/api/academic-events",       academicEventsRoutes);
 app.use("/api/me",                    meRoutes);
+// PROTECTED ROUTES DE ESTANCIA
+app.use("/api/school-config",  schoolConfigRoutes);
+app.use("/api/allergies",      allergiesRoutes);
+app.use("/api/daily-reports",  dailyReportsRoutes);
+app.use("/api/pickup-control", pickupControlRoutes);
+app.use("/api/milestones",     milestonesRoutes);
+app.use("/api/medication-log", medicationLogRoutes);
+app.use("/api/messages",       messagesRoutes);
 
 // ============================================================
 // 🔍 404
