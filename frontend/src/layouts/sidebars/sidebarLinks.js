@@ -18,6 +18,20 @@ export const adminLinks = [
       { to: "/app/payments",    label: "💰 Pagos" },
     ],
   },
+  {
+    // 🔥 V2.0 — Solo visible cuando la escuela es tipo "estancia"
+    // Por ahora se muestra siempre para que puedas probar
+    // Después lo condicionales con school_config
+    section: "Estancia Infantil",
+    links: [
+      { to: "/app/daily-reports",   label: "📋 Reporte Diario" },
+      { to: "/app/pickup-control",  label: "🚪 Entrada / Salida" },
+      { to: "/app/milestones",      label: "🌱 Hitos de Desarrollo" },
+      { to: "/app/medication-log",  label: "💊 Medicamentos" },
+      { to: "/app/allergies",       label: "⚠️ Alergias" },
+      { to: "/app/messages",        label: "💬 Mensajes" },
+    ],
+  },
 ];
 
 export const teacherLinks = [
@@ -31,6 +45,18 @@ export const teacherLinks = [
       { to: "/app/incidents",         label: "🚨 Incidentes" },
     ],
   },
+  {
+    // 🔥 V2.0 — Estancia Infantil
+    section: "Estancia Infantil",
+    links: [
+      { to: "/app/daily-reports",  label: "📋 Reporte Diario" },
+      { to: "/app/pickup-control", label: "🚪 Entrada / Salida" },
+      { to: "/app/milestones",     label: "🌱 Hitos de Desarrollo" },
+      { to: "/app/medication-log", label: "💊 Medicamentos" },
+      { to: "/app/allergies",      label: "⚠️ Alergias" },
+      { to: "/app/messages",       label: "💬 Mensajes" },
+    ],
+  },
 ];
 
 export const parentLinks = [
@@ -41,6 +67,17 @@ export const parentLinks = [
       { to: "/app/assignments",      label: "📚 Tareas" },
       { to: "/app/grades",           label: "📝 Calificaciones" },
       { to: "/app/payments",         label: "💳 Pagos" },
+    ],
+  },
+  {
+    // 🔥 V2.0 — Estancia Infantil
+    section: "Estancia Infantil",
+    links: [
+      { to: "/app/daily-reports",  label: "📋 Reporte del día" },
+      { to: "/app/pickup-control", label: "🚪 Entrada / Salida" },
+      { to: "/app/milestones",     label: "🌱 Desarrollo" },
+      { to: "/app/medication-log", label: "💊 Medicamentos" },
+      { to: "/app/messages",       label: "💬 Mensajes" },
     ],
   },
 ];
