@@ -1,6 +1,7 @@
 import { apiSlice } from "../../app/api/apiSlice";
 
 export const meApi = apiSlice.injectEndpoints({
+  overrideExisting: false, // 🔥 Va aquí afuera, no dentro de endpoints
   endpoints: (builder) => ({
     getMyDashboard: builder.query({
       query: () => "/me/dashboard",
@@ -14,11 +15,10 @@ export const meApi = apiSlice.injectEndpoints({
       query: () => "/me/grades",
       providesTags: ["Grades"],
     }),
-    getMyChildren: b.query({
+    getMyChildren: builder.query({ // 🔥 Era b.query, debe ser builder.query
       query: () => "/me/children",
       providesTags: ["Students"],
     }),
-  overrideExisting: false,
   }),
 });
 
