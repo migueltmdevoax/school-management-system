@@ -13,3 +13,5 @@ router.get("/dashboard", verifyToken, getMyDashboard);
 router.get("/students",  verifyToken, getMyStudents);
 router.get("/grades",    verifyToken, getMyGrades);
 router.get("/children",  verifyToken, getMyChildren); // 🔥 Nuevo — hijos del parent
+
+export default router; // 🔥 Esta línea faltaba
