@@ -3,8 +3,8 @@ import db from "../../config/db.js";
 export const getByStudent = async (studentId) => {
   const { rows } = await db.query(
     `SELECT ml.*,
-            rb.email AS requested_by_email,
-            ab.email AS authorized_by_email,
+            rb.email  AS requested_by_email,
+            ab.email  AS authorized_by_email,
             adm.email AS administered_by_email
      FROM medication_log ml
      LEFT JOIN users rb  ON rb.id  = ml.requested_by
@@ -17,16 +17,30 @@ export const getByStudent = async (studentId) => {
   return rows;
 };
 
-export const getPending = async (teacherId) => {
+export const getPendingByTeacher = async (teacherId) => {
   const { rows } = await db.query(
     `SELECT ml.*, s.first_name, s.last_name
      FROM medication_log ml
      JOIN students s ON s.id = ml.student_id
      JOIN groups g ON g.id = s.group_id
-     WHERE g.teacher_id = $1
-       AND ml.administered = false
+     WHERE g.teacher_id = $1 AND ml.administered = false
      ORDER BY ml.requested_at ASC`,
     [teacherId]
+  );
+  return rows;
+};
+
+// 🔥 Nuevo — para que el parent vea los medicamentos pendientes de SUS hijos
+export const getPendingByParent = async (parentId) => {
+  const { rows } = await db.query(
+    `SELECT ml.*, s.first_name, s.last_name
+     FROM medication_log ml
+     JOIN students s ON s.id = ml.student_id
+     JOIN parent_students ps ON ps.student_id = ml.student_id
+     JOIN parents p ON p.id = ps.parent_id
+     WHERE p.id = $1 AND ml.administered = false
+     ORDER BY ml.requested_at ASC`,
+    [parentId]
   );
   return rows;
 };

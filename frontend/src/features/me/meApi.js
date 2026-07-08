@@ -14,6 +14,11 @@ export const meApi = apiSlice.injectEndpoints({
       query: () => "/me/grades",
       providesTags: ["Grades"],
     }),
+    getMyChildren: b.query({
+      query: () => "/me/children",
+      providesTags: ["Students"],
+    }),
+  overrideExisting: false,
   }),
 });
 
@@ -21,4 +26,5 @@ export const {
   useGetMyDashboardQuery,
   useGetMyStudentsQuery,
   useGetMyGradesQuery,
+  useGetMyChildrenQuery,
 } = meApi;

@@ -1,6 +1,7 @@
 import { useState }    from "react";
 import { useSelector } from "react-redux";
-import { useGetStudentsQuery }  from "../../../features/students/studentsApi";
+import { useGetStudentsQuery }       from "../../../features/students/studentsApi";
+import { useGetMyChildrenQuery }     from "../../../features/me/meApi";
 import { useGetMilestonesQuery, useCreateMilestoneMutation } from "../api/milestonesApi";
 import StudentSearchSelect from "../../../components/forms/StudentSearchSelect";
 import { useToast }        from "../../../features/toast/useToast";
@@ -25,6 +26,7 @@ export default function MilestonesPage() {
   const toast     = useToast();
   const isTeacher = user?.role === "teacher";
   const isAdmin   = user?.role === "admin";
+  const isParent  = user?.role === "parent";
 
   const [selectedStudent, setSelectedStudent] = useState("");
   const [showForm, setShowForm]               = useState(false);
@@ -34,11 +36,17 @@ export default function MilestonesPage() {
     socioemocional: "", autonomia: "", cognicion: "", observations: "",
   });
 
-  const { data: studentsData = [] }  = useGetStudentsQuery();
+  // 🔥 Parent usa sus hijos, teacher/admin usan todos
+  const { data: allStudentsData = [] } = useGetStudentsQuery(undefined, { skip: isParent });
+  const { data: myChildrenData }       = useGetMyChildrenQuery(undefined, { skip: !isParent });
+
+  const students = isParent
+    ? (myChildrenData?.data || [])
+    : (allStudentsData || []);
+
   const { data: milestonesData }     = useGetMilestonesQuery(selectedStudent, { skip: !selectedStudent });
   const [createMilestone, { isLoading: creating }] = useCreateMilestoneMutation();
 
-  const students  = studentsData || [];
   const milestones = milestonesData?.data || [];
 
   const handleSubmit = async (e) => {
@@ -69,14 +77,15 @@ export default function MilestonesPage() {
         )}
       </div>
 
-      {/* SELECTOR DE ALUMNO */}
       <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-        <label className="text-sm text-gray-400 mb-2 block">Ver hitos de:</label>
+        <label className="text-sm text-gray-400 mb-2 block">
+          {isParent ? "Ver desarrollo de tu hijo:" : "Ver hitos de:"}
+        </label>
         <StudentSearchSelect students={students} value={selectedStudent}
           onChange={setSelectedStudent} placeholder="Buscar alumno..." />
       </div>
 
-      {showForm && (
+      {showForm && (isTeacher || isAdmin) && (
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6">
           <h2 className="text-xl font-bold text-white mb-4">📝 Nueva Evaluación</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -135,7 +144,6 @@ export default function MilestonesPage() {
         </div>
       )}
 
-      {/* LISTA DE EVALUACIONES */}
       {selectedStudent && (
         <div className="space-y-4">
           {milestones.length === 0 ? (

@@ -8,11 +8,49 @@ const resolveTeacherId = async (user) => {
   return r.rows[0]?.id || null;
 };
 
+const resolveParentId = async (user) => {
+  if (user.parent_id) return user.parent_id;
+  const r = await db.query(`SELECT id FROM parents WHERE user_id = $1 LIMIT 1`, [user.id]);
+  return r.rows[0]?.id || null;
+};
+
 export const getByDate = async (req, res, next) => {
   try {
+    const { role } = req.user;
+    const date = req.query.date || new Date().toISOString().split("T")[0];
+
+    if (role === "parent") {
+      // 🔥 Parent ve entradas/salidas de SUS hijos
+      const parentId = await resolveParentId(req.user);
+      if (!parentId) return res.status(404).json({ success: false, message: "Parent not found" });
+      const { rows } = await db.query(
+        `SELECT pc.*, s.first_name, s.last_name
+         FROM pickup_control pc
+         JOIN students s ON s.id = pc.student_id
+         JOIN parent_students ps ON ps.student_id = pc.student_id
+         JOIN parents p ON p.id = ps.parent_id
+         WHERE DATE(pc.event_time) = $1 AND p.id = $2
+         ORDER BY pc.event_time DESC`,
+        [date, parentId]
+      );
+      return res.json({ success: true, data: rows });
+    }
+
+    if (role === "admin") {
+      const { rows } = await db.query(
+        `SELECT pc.*, s.first_name, s.last_name
+         FROM pickup_control pc
+         JOIN students s ON s.id = pc.student_id
+         WHERE DATE(pc.event_time) = $1
+         ORDER BY pc.event_time DESC`,
+        [date]
+      );
+      return res.json({ success: true, data: rows });
+    }
+
+    // Teacher
     const teacherId = await resolveTeacherId(req.user);
     if (!teacherId) return res.status(404).json({ success: false, message: "Teacher not found" });
-    const date = req.query.date || new Date().toISOString().split("T")[0];
     const data = await service.getByDate(date, teacherId);
     return res.json({ success: true, data });
   } catch (error) { next(error); }
@@ -38,7 +76,6 @@ export const create = async (req, res, next) => {
 
     const entry = await service.create({ ...req.body, registeredBy: req.user.id });
 
-    // 🔥 Notifica al padre en tiempo real
     const parents = await db.query(
       `SELECT u.id AS user_id, s.first_name AS sf, s.last_name AS sl
        FROM parent_students ps
@@ -49,7 +86,6 @@ export const create = async (req, res, next) => {
       [studentId]
     );
 
-    const eventLabel = event_type === "LLEGADA" ? "llegó a la escuela" : "fue recogido/a";
     const person = event_type === "LLEGADA"
       ? req.body.delivered_by || "un familiar"
       : req.body.picked_up_by || "un familiar";
@@ -58,7 +94,7 @@ export const create = async (req, res, next) => {
       await createNotification({
         userId:  p.user_id,
         title:   event_type === "LLEGADA" ? "🏫 Llegada registrada" : "🏠 Salida registrada",
-        message: `${p.sf} ${p.sl} ${eventLabel}. Entregado/recogido por: ${person}`,
+        message: `${p.sf} ${p.sl} ${event_type === "LLEGADA" ? "llegó" : "fue recogido/a"}. Por: ${person}`,
         type:    "pickup",
       });
     }

@@ -4,6 +4,7 @@ import {
   getMyDashboard,
   getMyStudents,
   getMyGrades,
+  getMyChildren,
 } from "./me.controller.js";
 
 const router = express.Router();
@@ -11,5 +12,4 @@ const router = express.Router();
 router.get("/dashboard", verifyToken, getMyDashboard);
 router.get("/students",  verifyToken, getMyStudents);
 router.get("/grades",    verifyToken, getMyGrades);
-
-export default router;
+router.get("/children",  verifyToken, getMyChildren); // 🔥 Nuevo — hijos del parent

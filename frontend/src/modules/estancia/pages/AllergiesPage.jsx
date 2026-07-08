@@ -1,22 +1,23 @@
 import { useState }    from "react";
 import { useSelector } from "react-redux";
-import { useGetStudentsQuery } from "../../../features/students/studentsApi";
+import { useGetStudentsQuery }          from "../../../features/students/studentsApi";
+import { useGetMyChildrenQuery }        from "../../../features/me/meApi";
 import { useGetAllergiesByStudentQuery, useCreateAllergyMutation, useDeleteAllergyMutation }
   from "../api/allergiesApi";
 import StudentSearchSelect from "../../../components/forms/StudentSearchSelect";
 import { useToast }        from "../../../features/toast/useToast";
 
 const TYPE_CONFIG = {
-  ALERGIA:       { label: "⚠️ Alergia",           color: "text-red-400 bg-red-500/10 border-red-500/30" },
-  INTOLERANCIA:  { label: "🥛 Intolerancia",       color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" },
-  DIETA_ESPECIAL:{ label: "🍽️ Dieta especial",     color: "text-blue-400 bg-blue-500/10 border-blue-500/30" },
-  NOTA_MEDICA:   { label: "📋 Nota médica",         color: "text-purple-400 bg-purple-500/10 border-purple-500/30" },
+  ALERGIA:       { label: "⚠️ Alergia",        color: "text-red-400 bg-red-500/10 border-red-500/30" },
+  INTOLERANCIA:  { label: "🥛 Intolerancia",    color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/30" },
+  DIETA_ESPECIAL:{ label: "🍽️ Dieta especial",  color: "text-blue-400 bg-blue-500/10 border-blue-500/30" },
+  NOTA_MEDICA:   { label: "📋 Nota médica",      color: "text-purple-400 bg-purple-500/10 border-purple-500/30" },
 };
 
 const SEVERITY_CONFIG = {
-  LEVE:   { label: "Leve",   color: "bg-green-500/20 text-green-400" },
-  MEDIA:  { label: "Media",  color: "bg-yellow-500/20 text-yellow-400" },
-  SEVERA: { label: "Severa", color: "bg-orange-500/20 text-orange-400" },
+  LEVE:   { label: "Leve",      color: "bg-green-500/20 text-green-400" },
+  MEDIA:  { label: "Media",     color: "bg-yellow-500/20 text-yellow-400" },
+  SEVERA: { label: "Severa",    color: "bg-orange-500/20 text-orange-400" },
   MORTAL: { label: "⚠️ MORTAL", color: "bg-red-500/20 text-red-400 font-black" },
 };
 
@@ -25,6 +26,7 @@ export default function AllergiesPage() {
   const toast     = useToast();
   const isTeacher = user?.role === "teacher";
   const isAdmin   = user?.role === "admin";
+  const isParent  = user?.role === "parent";
 
   const [selectedStudent, setSelectedStudent] = useState("");
   const [showForm, setShowForm]               = useState(false);
@@ -32,12 +34,18 @@ export default function AllergiesPage() {
     studentId: "", allergy_type: "ALERGIA", description: "", severity: "MEDIA",
   });
 
-  const { data: studentsData = [] }      = useGetStudentsQuery();
+  // 🔥 Admin/Teacher usan todos los estudiantes, parent usa solo sus hijos
+  const { data: allStudentsData = [] } = useGetStudentsQuery(undefined, { skip: isParent });
+  const { data: myChildrenData }       = useGetMyChildrenQuery(undefined, { skip: !isParent });
+
+  const students = isParent
+    ? (myChildrenData?.data || [])
+    : (allStudentsData || []);
+
   const { data: allergiesData }          = useGetAllergiesByStudentQuery(selectedStudent, { skip: !selectedStudent });
   const [createAllergy, { isLoading: creating }] = useCreateAllergyMutation();
   const [deleteAllergy]                          = useDeleteAllergyMutation();
 
-  const students = studentsData || [];
   const allergies = allergiesData?.data || [];
 
   const handleSubmit = async (e) => {
@@ -77,13 +85,16 @@ export default function AllergiesPage() {
         )}
       </div>
 
+      {/* SELECTOR */}
       <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6">
-        <label className="text-sm text-gray-400 mb-2 block">Ver restricciones de:</label>
+        <label className="text-sm text-gray-400 mb-2 block">
+          {isParent ? "Ver restricciones de tu hijo:" : "Ver restricciones de:"}
+        </label>
         <StudentSearchSelect students={students} value={selectedStudent}
           onChange={setSelectedStudent} placeholder="Buscar alumno..." />
       </div>
 
-      {showForm && (
+      {showForm && (isTeacher || isAdmin) && (
         <div className="bg-gray-900 border border-red-500/20 rounded-3xl p-6">
           <h2 className="text-xl font-bold text-white mb-4">⚠️ Nueva Restricción</h2>
           <form onSubmit={handleSubmit} className="space-y-4">

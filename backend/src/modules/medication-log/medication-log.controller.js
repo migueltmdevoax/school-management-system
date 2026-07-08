@@ -23,9 +23,32 @@ export const getByStudent = async (req, res, next) => {
 
 export const getPending = async (req, res, next) => {
   try {
+    const { role } = req.user;
+
+    if (role === "parent") {
+      // 🔥 Parent ve los medicamentos pendientes de SUS hijos
+      const parentId = await resolveParentId(req.user);
+      if (!parentId) return res.status(404).json({ success: false, message: "Parent not found" });
+      const data = await service.getPendingByParent(parentId);
+      return res.json({ success: true, data });
+    }
+
+    if (role === "admin") {
+      // Admin ve todos
+      const { rows } = await db.query(
+        `SELECT ml.*, s.first_name, s.last_name
+         FROM medication_log ml
+         JOIN students s ON s.id = ml.student_id
+         WHERE ml.administered = false
+         ORDER BY ml.requested_at ASC`
+      );
+      return res.json({ success: true, data: rows });
+    }
+
+    // Teacher
     const teacherId = await resolveTeacherId(req.user);
     if (!teacherId) return res.status(404).json({ success: false, message: "Teacher not found" });
-    const data = await service.getPending(teacherId);
+    const data = await service.getPendingByTeacher(teacherId);
     return res.json({ success: true, data });
   } catch (error) { next(error); }
 };
@@ -42,7 +65,6 @@ export const create = async (req, res, next) => {
 
     const entry = await service.create({ ...req.body, requestedBy: req.user.id });
 
-    // 🔥 Solicitar autorización al padre — notificación urgente
     const parents = await db.query(
       `SELECT u.id AS user_id, s.first_name AS sf, s.last_name AS sl
        FROM parent_students ps
@@ -52,10 +74,11 @@ export const create = async (req, res, next) => {
        WHERE ps.student_id = $1`,
       [studentId]
     );
+
     for (const p of parents.rows) {
       await createNotification({
         userId:    p.user_id,
-        title:     "💊 Autorización de medicamento requerida",
+        title:     "💊 Autorización requerida",
         message:   `Se requiere tu autorización para administrar ${medication_name} (${dosage}) a ${p.sf} ${p.sl}`,
         type:      "medication",
         relatedId: entry.id,
@@ -68,14 +91,13 @@ export const create = async (req, res, next) => {
 
 export const authorize = async (req, res, next) => {
   try {
-    // Solo el padre puede autorizar
     if (req.user.role !== "parent") {
       return res.status(403).json({ success: false, message: "Only parents can authorize medication" });
     }
     const data = await service.authorize(req.params.id, req.user.id);
 
-    // Notifica a la educadora que ya fue autorizado
-    const admins = await db.query(`SELECT id FROM users WHERE role = 'admin'`);
+    // Notifica a admin y teacher que ya fue autorizado
+    const admins = await db.query(`SELECT id FROM users WHERE role IN ('admin', 'teacher')`);
     for (const a of admins.rows) {
       await createNotification({
         userId:  a.id,
