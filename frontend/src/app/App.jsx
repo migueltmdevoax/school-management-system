@@ -101,7 +101,7 @@ export default function App() {
             <RoleRoute allowedRoles={["admin","teacher","parent"]}><MedicationLogPage /></RoleRoute>
           } />
           <Route path="allergies" element={
-            <RoleRoute allowedRoles={["admin","teacher"]}><AllergiesPage /></RoleRoute>
+            <RoleRoute allowedRoles={["admin","teacher","parent"]}><AllergiesPage /></RoleRoute>
           } />
           <Route path="messages" element={
             <RoleRoute allowedRoles={["admin","teacher","parent"]}><MessagesPage /></RoleRoute>
