@@ -6,10 +6,11 @@ import { authorizeRoles } from "../../middleware/authorizeRoles.js";
 
 const router = express.Router();
 
-router.get("/pending",              verifyToken, authorizeRoles("admin", "teacher"), getPending);
-router.get("/student/:studentId",   verifyToken, authorizeRoles("admin", "teacher", "parent"), getByStudent);
-router.post("/",                    verifyToken, authorizeRoles("admin", "teacher"), create);
-router.put("/:id/authorize",        verifyToken, authorizeRoles("parent"), authorize);
-router.put("/:id/administered",     verifyToken, authorizeRoles("admin", "teacher"), markAdministered);
+// 🔥 FIX: parent puede ver pending (para autorizar) y su historial
+router.get("/pending",             verifyToken, authorizeRoles("admin", "teacher", "parent"), getPending);
+router.get("/student/:studentId",  verifyToken, authorizeRoles("admin", "teacher", "parent"), getByStudent);
+router.post("/",                   verifyToken, authorizeRoles("admin", "teacher"), create);
+router.put("/:id/authorize",       verifyToken, authorizeRoles("parent"), authorize);
+router.put("/:id/administered",    verifyToken, authorizeRoles("admin", "teacher"), markAdministered);
 
 export default router;
