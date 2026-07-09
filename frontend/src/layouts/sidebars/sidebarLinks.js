@@ -70,13 +70,13 @@ export const parentLinks = [
     ],
   },
   {
-    // 🔥 V2.0 — Estancia Infantil
     section: "Estancia Infantil",
     links: [
       { to: "/app/daily-reports",  label: "📋 Reporte del día" },
       { to: "/app/pickup-control", label: "🚪 Entrada / Salida" },
       { to: "/app/milestones",     label: "🌱 Desarrollo" },
       { to: "/app/medication-log", label: "💊 Medicamentos" },
+      { to: "/app/allergies",      label: "⚠️ Alergias" }, // 🔥 Faltaba esta
       { to: "/app/messages",       label: "💬 Mensajes" },
     ],
   },
