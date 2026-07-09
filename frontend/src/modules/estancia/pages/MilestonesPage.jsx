@@ -62,6 +62,9 @@ export default function MilestonesPage() {
     }
   };
 
+  console.log("students para selector:", students);
+  console.log("myChildrenData:", myChildrenData);
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
