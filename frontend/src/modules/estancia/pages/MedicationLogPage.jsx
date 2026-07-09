@@ -20,14 +20,16 @@ export default function MedicationLogPage() {
     studentId: "", medication_name: "", dosage: "", reason: "",
   });
 
-  const { data: pendingData, isLoading }   = useGetMedicationPendingQuery(undefined, { skip: isParent });
-  const { data: studentsData = [] }        = useGetStudentsQuery(undefined, { skip: isParent });
-  const [createMedication, { isLoading: creating }] = useCreateMedicationMutation();
-  const [authorizeMedication]              = useAuthorizeMedicationMutation();
-  const [markAdministered]                 = useMarkAdministeredMutation();
+  // 🔥 FIX: parent SÍ llama a pending — el backend ya filtra por sus hijos
+  const { data: pendingData, isLoading } = useGetMedicationPendingQuery();
+  const { data: studentsData = [] }      = useGetStudentsQuery(undefined, { skip: isParent });
 
-  const pending  = pendingData?.data  || [];
-  const students = studentsData || [];
+  const [createMedication, { isLoading: creating }] = useCreateMedicationMutation();
+  const [authorizeMedication]  = useAuthorizeMedicationMutation();
+  const [markAdministered]     = useMarkAdministeredMutation();
+
+  const pending  = pendingData?.data || [];
+  const students = studentsData      || [];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,18 +50,14 @@ export default function MedicationLogPage() {
     try {
       await authorizeMedication(id).unwrap();
       toast.success("✅ Autorizado", "La educadora fue notificada");
-    } catch (err) {
-      toast.error("Error", "No se pudo autorizar");
-    }
+    } catch { toast.error("Error", "No se pudo autorizar"); }
   };
 
   const handleAdministered = async (id) => {
     try {
       await markAdministered(id).unwrap();
       toast.success("💊 Administrado", "Medicamento marcado como administrado");
-    } catch (err) {
-      toast.error("Error", "No se pudo marcar como administrado");
-    }
+    } catch { toast.error("Error", "No se pudo marcar como administrado"); }
   };
 
   if (isLoading) return <div className="p-6"><SkeletonTable /></div>;
@@ -128,7 +126,9 @@ export default function MedicationLogPage() {
         {pending.length === 0 ? (
           <div className="bg-gray-900 border border-gray-800 rounded-3xl p-12 text-center text-gray-400">
             <p className="text-5xl mb-4">💊</p>
-            <p className="text-xl font-bold text-white">Sin medicamentos pendientes</p>
+            <p className="text-xl font-bold text-white">
+              {isParent ? "Sin medicamentos pendientes para tus hijos" : "Sin medicamentos pendientes"}
+            </p>
           </div>
         ) : pending.map((m) => (
           <div key={m.id} className={`bg-gray-900 border rounded-3xl p-6 ${
@@ -136,9 +136,7 @@ export default function MedicationLogPage() {
           }`}>
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-white font-bold text-lg">
-                  {m.first_name} {m.last_name}
-                </h3>
+                <h3 className="text-white font-bold text-lg">{m.first_name} {m.last_name}</h3>
                 <p className="text-blue-400 font-bold mt-1">{m.medication_name} — {m.dosage}</p>
                 {m.reason && <p className="text-gray-400 text-sm mt-1">Motivo: {m.reason}</p>}
                 <p className="text-gray-500 text-xs mt-2">
@@ -147,21 +145,14 @@ export default function MedicationLogPage() {
               </div>
               <div className="flex flex-col items-end gap-2">
                 {!m.authorized ? (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400">
-                    ⏳ Esperando autorización
-                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400">⏳ Esperando autorización</span>
                 ) : !m.administered ? (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400">
-                    ✅ Autorizado — pendiente administrar
-                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400">✅ Autorizado — pendiente administrar</span>
                 ) : (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
-                    ✅ Administrado
-                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">✅ Administrado</span>
                 )}
               </div>
             </div>
-
             <div className="flex gap-2 mt-4">
               {isParent && !m.authorized && (
                 <button onClick={() => handleAuthorize(m.id)}
